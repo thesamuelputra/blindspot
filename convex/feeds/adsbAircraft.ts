@@ -23,6 +23,19 @@ const META: SourceMeta = {
 const CENTER = { lat: 49.35, lng: -124.4 };
 const RADIUS_NM = 165;
 
+// ICAO type designators that are rotorcraft (common in BC airspace: air
+// ambulance, Coast Guard, RCAF Cormorant, utility + heli-logging types).
+const HELI_TYPES = new Set([
+  'B06', 'B47', 'B105', 'B212', 'B214', 'B412', 'B429', 'B505',
+  'R22', 'R44', 'R66',
+  'S61', 'S76', 'S92',
+  'EC20', 'EC25', 'EC30', 'EC35', 'EC45', 'EC55', 'EC75', 'EC120', 'EC130',
+  'AS50', 'AS55', 'AS65', 'H125', 'H130', 'H135', 'H145', 'H160', 'H175',
+  'A109', 'A119', 'A139', 'A169', 'A189', 'AW09', 'AW39',
+  'CH47', 'H47', 'H53', 'H60', 'H64', 'UH1', 'UH1Y',
+  'MD52', 'MD60', 'BK17', 'EN28', 'EXPL', 'EH10', 'CL60H',
+]);
+
 const PROVIDERS = [
   `https://opendata.adsb.fi/api/v2/lat/${CENTER.lat}/lon/${CENTER.lng}/dist/${RADIUS_NM}`,
   `https://api.adsb.lol/v2/lat/${CENTER.lat}/lon/${CENTER.lng}/dist/${RADIUS_NM}`,
@@ -76,6 +89,11 @@ export const sync = internalAction({
             label: [a.flight, a.r, a.hex]
               .map((x) => x?.trim())
               .find((x) => x && !/^0+$/.test(x))!,
+            // marker identity: rotorcraft get their own icon; military gets
+            // amber. ADS-B emitter category A7 = rotorcraft; the type-designator
+            // set catches helis broadcasting a generic category.
+            cat: a.category === 'A7' || HELI_TYPES.has(a.t ?? '') ? 'heli' : 'plane',
+            mil: ((a.dbFlags ?? 0) & 1) === 1,
             lat: a.lat!,
             lng: a.lon!,
             heading: a.track,

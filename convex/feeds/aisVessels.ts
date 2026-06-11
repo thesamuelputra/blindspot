@@ -16,10 +16,34 @@ const META: SourceMeta = {
   licenseNote: 'aisstream.io beta — no SLA; worker reconnects with backoff',
 };
 
+// AIS ship-type number → marker category (ITU-R M.1371 type groups).
+function vesselCat(shipType: number | undefined): string {
+  if (shipType == null) return 'vessel';
+  if (shipType === 30) return 'fishing';
+  if (shipType === 31 || shipType === 32 || shipType === 52) return 'tug';
+  if (shipType === 35) return 'military';
+  if (shipType === 36 || shipType === 37) return 'pleasure';
+  if (shipType >= 50 && shipType <= 55) return 'tug'; // pilot/SAR/port tenders
+  if (shipType >= 60 && shipType <= 69) return 'passenger';
+  if (shipType >= 70 && shipType <= 79) return 'cargo';
+  if (shipType >= 80 && shipType <= 89) return 'tanker';
+  return 'vessel';
+}
+
 export const ingest = internalMutation({
   args: { vessels: v.array(v.any()) },
   handler: async (ctx, { vessels }) => {
-    const count = await upsertMovers(ctx, 'vessel', META.slug, vessels as MoverInput[]);
+    // stamp marker identity from the worker's state JSON (shipType)
+    const movers = (vessels as MoverInput[]).map((m) => {
+      let shipType: number | undefined;
+      try {
+        shipType = m.state ? (JSON.parse(m.state) as { shipType?: number }).shipType : undefined;
+      } catch {
+        /* keep undefined */
+      }
+      return { ...m, cat: vesselCat(shipType) };
+    });
+    const count = await upsertMovers(ctx, 'vessel', META.slug, movers);
     await reportSuccess(ctx, META, count);
   },
 });

@@ -175,6 +175,8 @@ export const sync = internalAction({
             byVessel.set(extId, {
               extId,
               label: s.vesselName || r.routeCode,
+              tag: r.routeCode,
+              cat: 'ferry',
               lat,
               lng,
               heading: bearingDeg(dep, dst),

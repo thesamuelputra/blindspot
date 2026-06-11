@@ -41,6 +41,9 @@ interface UiState {
   // MapShell consumes and clears
   flyTo: { lat: number; lng: number; zoom?: number } | null;
   requestFlyTo: (f: UiState['flyTo']) => void;
+  // current map zoom (MapShell writes on zoomend; label density gates on it)
+  mapZoom: number;
+  setMapZoom: (z: number) => void;
 }
 
 export const useUi = create<UiState>((set) => ({
@@ -65,4 +68,6 @@ export const useUi = create<UiState>((set) => ({
   setWindowH: (windowH) => set((s) => ({ time: { ...s.time, windowH } })),
   flyTo: null,
   requestFlyTo: (flyTo) => set({ flyTo }),
+  mapZoom: 7,
+  setMapZoom: (mapZoom) => set({ mapZoom }),
 }));

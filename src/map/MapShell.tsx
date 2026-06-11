@@ -69,8 +69,12 @@ export function MapShell({
       m.on('mousemove', (e) => setReticle({ lat: e.lngLat.lat, lng: e.lngLat.lng }));
       m.on('mouseout', () => setReticle(null));
       m.on('load', () => {
-        if (!cancelled) setMap(m);
+        if (!cancelled) {
+          setMap(m);
+          useUi.getState().setMapZoom(m!.getZoom());
+        }
       });
+      m.on('zoomend', () => useUi.getState().setMapZoom(m!.getZoom()));
 
       // AUDIT (Phase 6): a map constructed while its pane measures 0x0 sticks
       // at the 400x300 fallback — resize whenever the container box changes.

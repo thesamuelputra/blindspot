@@ -64,6 +64,8 @@ export const sync = internalAction({
           return {
             extId: s.serial,
             label: s.serial,
+            tag: s.type,
+            cat: 'balloon',
             lat: s.lat!,
             lng: s.lon!,
             heading: s.heading,

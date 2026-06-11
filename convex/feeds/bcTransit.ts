@@ -71,6 +71,10 @@ export const sync = internalAction({
           extId: id,
           // route id first — Victoria vehicle labels duplicate the numeric id
           label: routeId ? `${routeId} · ${vehLabel}` : vehLabel,
+          // marker identity: short route code for the on-map tag ("22A" from
+          // "22A-VIC"), color-keyed per route client-side
+          tag: routeId ? routeId.split('-')[0] : undefined,
+          cat: 'bus',
           lat: pos.latitude,
           lng: pos.longitude,
           heading: pos.bearing ?? undefined,

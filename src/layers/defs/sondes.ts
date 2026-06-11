@@ -1,6 +1,7 @@
 import { IconLayer } from '@deck.gl/layers';
 import { type SnapshotMover } from './aircraft';
 import { useAnimatedSnapshot } from '@/map/useAnimatedSnapshot';
+import { buildMoverLabels } from '../moverText';
 import type { LayerDef } from '../types';
 
 // Radiosondes from the positions:balloon snapshot (sondehub feed). Amber
@@ -30,6 +31,13 @@ export const sondesLayer: LayerDef<SnapshotMover> = {
         getSize: 14,
         sizeUnits: 'pixels',
         pickable: true,
+      }),
+      // serial + sonde type at every zoom — at most a couple in range
+      ...buildMoverLabels('sonde-labels', data, {
+        getText: (d) => (d.t ? `${d.label} ${d.t}` : d.label),
+        getColor: () => [245, 158, 11, 235],
+        size: 9,
+        offsetY: 11,
       }),
     ];
   },

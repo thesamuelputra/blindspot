@@ -15,6 +15,10 @@ export interface MoverInput {
   altitude?: number;
   state?: string; // kind-specific JSON
   at: number;
+  // marker identity (Samuel's contract: markers show what a thing IS):
+  tag?: string; // short display tag — bus route "22A", ferry route code…
+  cat?: string; // category for icon/color — plane|heli|bus|ferry|balloon|cargo|tanker|tug|passenger|fishing|pleasure…
+  mil?: boolean; // military aircraft flag (readsb dbFlags)
 }
 
 const TRACK_MIN_METERS = 50;
@@ -94,6 +98,9 @@ export async function upsertMovers(
         h: m.heading,
         s: m.speed,
         a: m.altitude,
+        t: m.tag,
+        c: m.cat,
+        m: m.mil || undefined,
       })),
     ),
   );

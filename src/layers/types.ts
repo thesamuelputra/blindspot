@@ -18,6 +18,11 @@ export interface RasterSpec {
   attribution: string;
 }
 
+// Render-time context for layer factories (zoom gates label density).
+export interface LayerCtx {
+  zoom: number;
+}
+
 export interface LayerDef<T = unknown> {
   id: string;
   label: string; // rail label, uppercase micro style
@@ -26,7 +31,7 @@ export interface LayerDef<T = unknown> {
   defaultOn: boolean;
   // deck path (data layers) — present unless this is a pure raster overlay
   useData?(): LayerData<T>; // wraps convex useQuery; must be a hook
-  toLayers?(data: T[]): Layer[];
+  toLayers?(data: T[], ctx?: LayerCtx): Layer[];
   // raster path
   raster?: RasterSpec;
 }

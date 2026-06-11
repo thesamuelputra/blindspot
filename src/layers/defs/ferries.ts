@@ -2,6 +2,7 @@ import { IconLayer } from '@deck.gl/layers';
 import { type LayerDef } from '../types';
 import { type SnapshotMover } from './aircraft';
 import { useAnimatedSnapshot } from '@/map/useAnimatedSnapshot';
+import { buildMoverLabels } from '../moverText';
 
 // BC Ferries from the positions:ferry snapshot (never raw entity scans —
 // ARCHITECTURE §10). Positions are schedule-derived estimates until the AIS
@@ -32,6 +33,13 @@ export const ferriesLayer: LayerDef<SnapshotMover> = {
         getSize: 14,
         sizeUnits: 'pixels',
         pickable: true,
+      }),
+      // vessel names at every zoom — only ~12 ferries on the board
+      ...buildMoverLabels('ferry-labels', data, {
+        getText: (d) => d.label,
+        getColor: () => FERRY_VIOLET,
+        size: 9,
+        offsetY: 11,
       }),
     ];
   },

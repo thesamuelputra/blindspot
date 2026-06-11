@@ -102,6 +102,8 @@ export function MapView({ page }: { page: string }) {
   );
   const defs = LAYER_REGISTRY.filter((d) => d.pages.includes(page));
 
+  const mapZoom = useUi((s) => s.mapZoom);
+  const layerCtx = { zoom: mapZoom };
   const dataById: Record<string, LayerData> = {};
   const deckLayers: Layer[] = [];
   const rasters: RasterToggle[] = [];
@@ -118,7 +120,7 @@ export function MapView({ page }: { page: string }) {
     const data = def.useData!();
     dataById[def.id] = data;
     if (on && !(timeMode === 'replay' && REPLAY_REPLACED.has(def.id)))
-      deckLayers.push(...def.toLayers!(data.data));
+      deckLayers.push(...def.toLayers!(data.data, layerCtx));
   }
 
   // hover + inspected trails (ARCHITECTURE §10 interaction contract)
