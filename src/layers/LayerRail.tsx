@@ -44,9 +44,9 @@ function RailRow({ def, data }: { def: LayerDef; data: LayerData }) {
         }}
       />
       <span style={{ flex: 1, textAlign: 'left' }}>{def.label}</span>
-      <span style={{ color: 'var(--text-3)' }}>{data.data.length}</span>
+      <span style={{ color: 'var(--text-3)' }}>{def.raster ? 'IMG' : data.data.length}</span>
       <span style={{ color: 'var(--text-3)', width: 28, textAlign: 'right' }}>
-        {ago(now, data.updatedAt)}
+        {def.raster ? 'live' : ago(now, data.updatedAt)}
       </span>
     </button>
   );

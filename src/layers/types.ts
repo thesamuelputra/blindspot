@@ -8,14 +8,27 @@ export interface LayerData<T = unknown> {
   updatedAt?: number; // newest observedAt, for the "updated Xs ago" chip
 }
 
+// Browser-direct raster overlay (GeoMet WMS etc. — CORS-open, no Convex hop).
+// MapShell owns source lifecycle + cache-bust refresh; inserted below labels.
+export interface RasterSpec {
+  tiles: string[]; // tile URL template(s) with {bbox-epsg-3857}
+  tileSize?: number;
+  opacity?: number;
+  refreshSec?: number; // re-bust cadence (match upstream frame rate)
+  attribution: string;
+}
+
 export interface LayerDef<T = unknown> {
   id: string;
   label: string; // rail label, uppercase micro style
   pages: string[]; // route ids this layer appears on ("command" is the master map)
   cluster: string; // SOURCES.md cluster (SYSTEM page cross-link)
   defaultOn: boolean;
-  useData(): LayerData<T>; // wraps convex useQuery; must be a hook
-  toLayers(data: T[]): Layer[];
+  // deck path (data layers) — present unless this is a pure raster overlay
+  useData?(): LayerData<T>; // wraps convex useQuery; must be a hook
+  toLayers?(data: T[]): Layer[];
+  // raster path
+  raster?: RasterSpec;
 }
 
 // Severity → accent mapping (tokens.css). RGBA arrays for deck.gl.
