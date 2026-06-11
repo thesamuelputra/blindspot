@@ -94,6 +94,15 @@ export function MapShell({
     });
   }, [layers, onPickHover, onPickClick]);
 
+  // one-shot fly-to requests (analyst highlights, ⌘K, incidents)
+  const flyTo = useUi((s) => s.flyTo);
+  const requestFlyTo = useUi((s) => s.requestFlyTo);
+  useEffect(() => {
+    if (!map || !flyTo) return;
+    map.flyTo({ center: [flyTo.lng, flyTo.lat], zoom: flyTo.zoom ?? 10, duration: 1200 });
+    requestFlyTo(null);
+  }, [map, flyTo, requestFlyTo]);
+
   // Raster overlays: sync sources/layers with toggles, insert below the first
   // symbol layer so place labels stay readable above radar/satellite imagery.
   useEffect(() => {

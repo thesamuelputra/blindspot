@@ -10,6 +10,7 @@ const crons = cronJobs();
 crons.interval('brain-tick', { seconds: 120 }, internal.brain.evaluate.evaluate, {});
 crons.interval('brain-baselines', { seconds: 3593 }, internal.brain.baselines.updateBaselines, {});
 crons.interval('intsum', { seconds: 14401 }, internal.brain.intsum.generate, {});
+crons.interval('retention', { seconds: 3581 }, internal.retention.run, {});
 
 // ---- fast lane (90–120s, D8: alert-grade feeds only) ----
 crons.interval('usgs-quakes', { seconds: 121 }, internal.feeds.usgsQuakes.sync, {});

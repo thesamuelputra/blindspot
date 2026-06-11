@@ -31,6 +31,16 @@ interface UiState {
   // inspector panel
   inspect: InspectTarget | null;
   setInspect: (t: InspectTarget | null) => void;
+  // time as the second axis (ARCHITECTURE §8): live = now-queries;
+  // replay = client scrubs a fetched window, t is the playhead (ms epoch)
+  time: { mode: 'live' | 'replay'; t: number; windowH: 1 | 6 | 24 | 48 };
+  setTimeMode: (mode: 'live' | 'replay') => void;
+  setPlayhead: (t: number) => void;
+  setWindowH: (h: 1 | 6 | 24 | 48) => void;
+  // one-shot fly-to requests (analyst highlights, ⌘K, incident jump);
+  // MapShell consumes and clears
+  flyTo: { lat: number; lng: number; zoom?: number } | null;
+  requestFlyTo: (f: UiState['flyTo']) => void;
 }
 
 export const useUi = create<UiState>((set) => ({
@@ -48,4 +58,11 @@ export const useUi = create<UiState>((set) => ({
     ),
   inspect: null,
   setInspect: (inspect) => set({ inspect }),
+  time: { mode: 'live', t: 0, windowH: 6 },
+  setTimeMode: (mode) =>
+    set((s) => ({ time: { ...s.time, mode, t: mode === 'replay' ? Date.now() : 0 } })),
+  setPlayhead: (t) => set((s) => ({ time: { ...s.time, t } })),
+  setWindowH: (windowH) => set((s) => ({ time: { ...s.time, windowH } })),
+  flyTo: null,
+  requestFlyTo: (flyTo) => set({ flyTo }),
 }));

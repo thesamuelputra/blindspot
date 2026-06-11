@@ -100,6 +100,7 @@ import type * as lib_ingest from "../lib/ingest.js";
 import type * as lib_movers from "../lib/movers.js";
 import type * as lib_xml from "../lib/xml.js";
 import type * as pushSubscriptions from "../pushSubscriptions.js";
+import type * as retention from "../retention.js";
 import type * as signals from "../signals.js";
 import type * as snapshots from "../snapshots.js";
 import type * as sources from "../sources.js";
@@ -205,6 +206,7 @@ declare const fullApi: ApiFromModules<{
   "lib/movers": typeof lib_movers;
   "lib/xml": typeof lib_xml;
   pushSubscriptions: typeof pushSubscriptions;
+  retention: typeof retention;
   signals: typeof signals;
   snapshots: typeof snapshots;
   sources: typeof sources;
