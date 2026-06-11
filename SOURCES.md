@@ -193,7 +193,7 @@
 - **Cadence:** fast (120s) for the FDSN query; the Atom cache appears to regenerate every few minutes
 - **CORS:** Access-Control-Allow-Origin: * observed
 - **Response shape:** format=text returns pipe-delimited: #EventID|Time|Latitude|Longitude|Depth/km|MagType|Magnitude|EventLocationName (location bilingual EN/FR, magType e.g. Mw'). format=xml is QuakeML. format=json/geojson NOT supported: returns HTTP 422 {errors:[{value:'json',msg:'Invalid value',param:'format'}]} - you must parse text or QuakeML.
-- **Gotchas:** Bare domain earthquakescanada.nrcan.gc.ca 301s to www. subdomain - use www. directly. No GeoJSON output (verified 422), unlike USGS. Atom fallback verified: https://www.earthquakescanada.nrcan.gc.ca/cache/earthquakes/canada-en.atom (last 30 days, georss). EEW status: operational in BC since spring 2024; public alerts only at ~M5+/intensity IV+ via NPAS; technical-partner low-latency feeds require an agreement with NRCan (EEWinfo-infoASP@nrcan-rncan.gc.ca) - there is no open EEW API.
+- **Gotchas:** Bare domain earthquakescanada.nrcan.gc.ca 301s to www. subdomain - use www. directly. No GeoJSON output (verified 422), unlike USGS. Atom fallback verified: https://www.earthquakescanada.nrcan.gc.ca/cache/earthquakes/canada-en.atom (last 30 days, georss). EEW status: operational in BC since spring 2024; public alerts only at ~M5+/intensity IV+ via NPAS; technical-partner low-latency feeds require an agreement with NRCan (EEWinfo-infoASP@nrcan-rncan.gc.ca) - there is no open EEW API. FDSN returns HTTP 204 No Content for an empty result window — treat as success with 0 records (verified 2026-06-11).
 
 ### Ocean Networks Canada Oceans 3.0 API — `onc-oceans3`
 
@@ -221,7 +221,7 @@
 - **Cadence:** fast (60-120s) - it is the cluster's primary alerting feed
 - **CORS:** No Access-Control-Allow-Origin header observed - browser fetch would fail; fine for Convex server-side polling
 - **Response shape:** Atom feed with geo:lat / geo:long per entry, xhtml summary containing Category (Information/Watch/Advisory/Warning), Bulletin Issue Time, Preliminary Magnitude, Lat/Lon, Affected Region, Note, and rel=related links to CAP XML (application/cap+xml), bulletin .txt, energy map and travel-time map JPGs. CAP doc: alert{identifier, sender, sent, status, msgType, scope, info{category, event, urgency, severity, certainty, expires, headline, description, areas...}}
-- **Gotchas:** Feed only carries the most recent event(s) - it is a current-state feed, not an archive; persist what you see. PAAQ covers BC/AK/US west coast; for far-field Pacific events also watch PHEB (PTWC). Feed can sit stale for weeks between events (last-modified Jun 8 on Jun 11) - staleness is normal, not an outage. BC-specific public guidance is issued separately by EMCR via EmergencyInfoBC.
+- **Gotchas:** Feed only carries the most recent event(s) - it is a current-state feed, not an archive; persist what you see. PAAQ covers BC/AK/US west coast; for far-field Pacific events also watch PHEB (PTWC). Feed can sit stale for weeks between events (last-modified Jun 8 on Jun 11) - staleness is normal, not an outage. BC-specific public guidance is issued separately by EMCR via EmergencyInfoBC. PAAQ also publishes Atlantic-side products (WEXX32 seen live) — region-filter even on PAAQ; PHEBAtom.xml's rel=self link mislabels itself as PAAQAtom.xml (upstream bug).
 
 ### USGS Did You Feel It? (DYFI) aggregate products — `usgs-dyfi`
 
@@ -277,7 +277,7 @@
 - **Cadence:** fast (persistent TCP stream, or 60s polling of the current date directory)
 - **CORS:** No CORS headers observed; root URL 403s (no listing) - date directories work. Server-side only.
 - **Response shape:** Apache directory listing of CAP 1.2 XML files named like 2026_06_11T00_00_06_00_00Inrcan_eew_test_1781136006.s_bor_vpa095007.xml; each file is an OASIS CAP alert with area/geocode blocks (SGC codes) for spatial filtering
-- **Gotchas:** Firehose for all of Canada - filter by CAP geocode (VI regional districts SGC 5917 Capital, 5919 Cowichan Valley, 5921 Nanaimo, 5923 Alberni-Clayoquot, 5924 Strathcona, 5926 Comox Valley, 5943 Mount Waddington) and by event codes (earthquake, tsunami). Heartbeat/test messages dominate quiet days - filter status=Actual and msgType. EEW public alerts only fire at ~M5+/MMI IV+, so this complements rather than replaces the FDSN catalogs.
+- **Gotchas:** Firehose for all of Canada - filter by CAP geocode (VI regional districts SGC 5917 Capital, 5919 Cowichan Valley, 5921 Nanaimo, 5923 Alberni-Clayoquot, 5924 Strathcona, 5926 Comox Valley, 5943 Mount Waddington) and by event codes (earthquake, tsunami). Heartbeat/test messages dominate quiet days - filter status=Actual and msgType. EEW public alerts only fire at ~M5+/MMI IV+, so this complements rather than replaces the FDSN catalogs. NOTE: duplicate of `naad-pelmorex` in the Pulse cluster — that entry is canonical (it carries the StatCan-verified SGC geocode list) and is the one the feed module `convex/feeds/naadPelmorex.ts` implements.
 
 ### IOC/UNESCO Sea Level Station Monitoring Facility (VLIZ) — `ioc-sealevel`
 
@@ -319,7 +319,7 @@
 - **Cadence:** slow (30-60 min). Catalog updates in near-real-time batches; poll only a trailing 24-48 h window incrementally instead of re-pulling 14 days (14 days was 266 KB / 1109 events during an active episode).
 - **CORS:** Access-Control-Allow-Origin: * (verified). Browser-fetchable, but poll server-side anyway for caching.
 - **Response shape:** JSON {count, features:[{type:'Feature', geometry:{type:'Point', coordinates:[lng,lat]}, properties:{id, time:'Thu, 28 May 2026 02:20:00 GMT', depth (km, float), duration (s), energy, magnitude, num_stas}}]} . GeoJSON-like FeatureCollection minus the top-level type field.
-- **Gotchas:** 1) time is an RFC-1123 GMT string, not ISO 8601; parse accordingly. 2) Payloads balloon during ETS episodes (one is underway now); always bound the window. 3) No API docs exist (/, /api/v3.0, /api/v3.0/docs all 404); the params starttime/endtime are confirmed working, anything else is unverified. 4) Tremor magnitudes (~0.8-1.2) are not earthquakes; label the layer as slow-slip tremor, not quakes.
+- **Gotchas:** 1) time is an RFC-1123 GMT string, not ISO 8601; parse accordingly. 2) Payloads balloon during ETS episodes (one is underway now); always bound the window. 3) No API docs exist (/, /api/v3.0, /api/v3.0/docs all 404); the params starttime/endtime are confirmed working, anything else is unverified. 4) Tremor magnitudes (~0.8-1.2) are not earthquakes; label the layer as slow-slip tremor, not quakes. No spatial params — the API returns the full catalog footprint incl. Northern California (lat ~40.2 seen); always bbox-filter server-side (~43% of a 14-day payload was out-of-box 2026-06-11). Future endtime values accepted (endtime=tomorrow is safe).
 
 ## Space Weather
 
@@ -791,7 +791,7 @@
 - **Cadence:** medium (5 min). Events are operator-updated, not telemetry; 5 min loses nothing.
 - **CORS:** Access-Control-Allow-Origin: * present (browser-callable)
 - **Response shape:** {events:[{id, url, jurisdiction_url, headline, status:ACTIVE, created, updated, description, +ivr_message, +linear_reference_km, schedule:{intervals:[ISO ranges]}, event_type (saw CONSTRUCTION|INCIDENT|SPECIAL_EVENT), event_subtypes, severity (saw MINOR|MAJOR), geography: GeoJSON Point or LineString, roads:[{name,from,to,direction}], areas:[{id:'drivebc.ca/2',name:'Vancouver Island District'}]}], pagination:{offset, previous_url/next_url}, meta:{version:'v1'}}
-- **Gotchas:** Pagination is offset/limit with relative next/previous URLs - follow them for large result sets. area_id=drivebc.ca/2 includes the Gulf Islands. severity values beyond MINOR/MAJOR exist in the Open511 spec but I only observed those two. Always pass format=json.
+- **Gotchas:** Pagination is offset/limit but responses include only previous_url — next_url is never returned (verified paging 133 results at limit=50); increment offset until a page returns fewer than limit. Schedule interval times are UTC without zone suffix; ACTIVE events can carry an updated timestamp months old. area_id=drivebc.ca/2 includes the Gulf Islands. severity values beyond MINOR/MAJOR exist in the Open511 spec but I only observed those two. Always pass format=json.
 
 ### DriveBC Highway Webcams (BCDC CSV + legacy API + new site API) — `drivebc-highwaycams`
 
@@ -1216,7 +1216,7 @@
 - **Cadence:** fast-medium: 2-5 min for active fire points during fire season (ArcGIS dataLastEditDate was <1 min old when polled), 15 min for perimeters, 30-60 min for bans/prohibitions.
 - **CORS:** openmaps: NO Access-Control-Allow-Origin observed on GET (only access-control-allow-credentials:true + Vary:Origin) - assume not browser-fetchable. ArcGIS Online: CORS * (standard AGO behavior). Server-side polling unaffected.
 - **Response shape:** WFS points GeoJSON properties: FIRE_NUMBER, FIRE_YEAR, RESPONSE_TYPE_DESC, IGNITION_DATE, FIRE_OUT_DATE, FIRE_STATUS (Out/Under Control/...), FIRE_CAUSE, FIRE_CENTRE, ZONE, FIRE_ID, FIRE_TYPE, INCIDENT_NAME, GEOGRAPHIC_DESCRIPTION, LATITUDE, LONGITUDE, CURRENT_SIZE (ha), FIRE_URL (wildfiresituation.nrs.gov.bc.ca incident link), FIRE_OF_NOTE_IND, WAS_FIRE_OF_NOTE_IND, OBJECTID; totalFeatures 285 province-wide; 2 non-Out fires inside VI bbox at verify time (V60498 Banon Creek, V50401). Bans layer: PROT_BAP_SYSID, TYPE (e.g. 'Partial Prohibition'), ACCESS_PROHIBITION_DESCRIPTION ('Category 2, Category 3'), ACCESS_STATUS_EFFECTIVE_DATE, FIRE_CENTRE_NAME (Coastal = VI), FIRE_ZONE_NAME, BULLETIN_URL; 6 features. ArcGIS layer mirrors the same schema plus GlobalID; supports f=geojson and outSR=4326.
-- **Gotchas:** WFS 2.0 bbox with EPSG:4326 urn CRS uses lat,lng axis order (bbox=48.20,-125.30,51.10,-123.10,urn:ogc:def:crs:EPSG:4326). HEAD requests to openmaps return 404 (Kong) - use GET. Bans polygons are huge multi-vertex features; use propertyName/outFields to skip geometry when you only need status. FIRE_STATUS includes already-out fires - filter FIRE_STATUS <> 'Out'. Coastal Fire Centre = Vancouver Island; FIRE_ZONE_NAME often null on bans, match on FIRE_CENTRE_NAME='Coastal'.
+- **Gotchas:** WFS 2.0 bbox with EPSG:4326 urn CRS uses lat,lng axis order (bbox=48.20,-125.30,51.10,-123.10,urn:ogc:def:crs:EPSG:4326). HEAD requests to openmaps return 404 (Kong) - use GET. Bans polygons are huge multi-vertex features; use propertyName/outFields to skip geometry when you only need status. FIRE_STATUS includes already-out fires - filter FIRE_STATUS <> 'Out'. Coastal Fire Centre = Vancouver Island; FIRE_ZONE_NAME often null on bans, match on FIRE_CENTRE_NAME='Coastal'. Perimeter-layer fields differ from points (FIRE_NUMBER, FIRE_STATUS, FIRE_SIZE_HECTARES, TRACK_DATE — no CURRENT_SIZE/GEOGRAPHIC_DESCRIPTION); f=geojson date fields are epoch ms, not ISO; where=FIRE_STATUS <> 'Out' is honored server-side on both layers.
 
 ### CWFIS Datamart - Daily Hotspots CSV + GeoServer WMS (FDR/FWI/M3) — `cwfis`
 
@@ -1243,7 +1243,7 @@
 - **Attribution:** 'We acknowledge the use of data from NASA's Fire Information for Resource Management System (FIRMS) (https://earthdata.nasa.gov/firms), part of NASA's Earth Science Data and Information System (ESDIS).'
 - **Cadence:** medium: 10-15 min polls on the 24h CSVs is plenty (new detections only land after satellite passes; VIIRS overpasses VI a handful of times/day). With a MAP_KEY, same cadence on the area API, well inside the 5000/10min budget.
 - **CORS:** No Access-Control-Allow-Origin header observed on the keyless CSV host - server-side fetch only
-- **Response shape:** Keyless CSV columns (seen): latitude, longitude, bright_ti4, scan, track, acq_date, acq_time, satellite (N/J), confidence (nominal/low/high), version (2.0NRT), bright_ti5, frp, daynight. Area API returns the same CSV schema scoped to your bbox/days.
+- **Response shape:** Keyless CSV columns (seen): latitude, longitude, bright_ti4, scan, track, acq_date, acq_time, satellite (N = Suomi NPP, N20 = NOAA-20), confidence (nominal/low/high), version (2.0NRT), bright_ti5, frp, daynight. Area API returns the same CSV schema scoped to your bbox/days.
 - **Gotchas:** Area API bbox order is west,south,east,north (lng first) - opposite of the BC WFS axis order. Sensors to query separately: VIIRS_SNPP_NRT, VIIRS_NOAA20_NRT, VIIRS_NOAA21_NRT, MODIS_NRT. Tofino-offshore detections ARE included (FIRMS is global) - widen the bbox west past -125.30 if you care about marine smoke plumes' source fires. Confidence 'low' has frequent false positives over warm urban/industrial pixels.
 
 ### FireSmoke.ca (UBC BlueSky Canada) + ECCC FireWork/RAQDPS smoke via MSC GeoMet WMS — `firesmoke`
@@ -1283,7 +1283,7 @@
 - **Cadence:** medium: 5-15 min during active incidents; status changes are high-stakes and low-volume.
 - **CORS:** openmaps: no ACAO observed; ArcGIS Online: *
 - **Response shape:** Fields seen: EMRG_OAA_SYSID, EVENT_NAME, EVENT_TYPE (Fire/Flood/...), ORDER_ALERT_STATUS (Order/Alert), ISSUING_AGENCY, DATE_MODIFIED, OBJECTID, polygon geometry; 9 features province-wide at verify time (quiet period).
-- **Gotchas:** Layer includes ALL hazard types - filter EVENT_TYPE='Fire' for the wildfire view but consider showing all for an OSINT console. Some stale historical entries persist (saw a 2023 flood order) - filter or badge by DATE_MODIFIED recency.
+- **Gotchas:** Layer includes ALL hazard types - filter EVENT_TYPE='Fire' for the wildfire view but consider showing all for an OSINT console. Some stale historical entries persist (saw a 2023 flood order) - filter or badge by DATE_MODIFIED recency. ORDER_ALERT_STATUS domain is exactly {Order, Alert} — rescinded entries are DELETED from the layer, so disappearance must be treated as cancellation; envelope geometry filtering + outSR=4326 + geometryPrecision verified working; useful extra fields: ORDER_ALERT_NAME, EVENT_START_DATE (epoch ms), MULTI_SOURCED_POPULATION/HOMES; a stale 2023 landslide Alert persists province-wide.
 
 ### CWFIF National Reported Fires (next-gen NRCan geoserver WFS) — `cwfif-reported-fires`
 
