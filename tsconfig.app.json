@@ -18,5 +18,7 @@
     "noUncheckedSideEffectImports": true,
     "paths": { "@/*": ["./src/*"] }
   },
-  "include": ["src", "convex"]
+  "include": ["src", "convex"],
+  // sw.ts targets the webworker lib (vite-plugin-pwa bundles it separately)
+  "exclude": ["src/sw.ts"]
 }

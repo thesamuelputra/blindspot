@@ -3,6 +3,7 @@ import { api } from '../../../convex/_generated/api';
 import { useNow, formatUtc, formatLocal, formatCoord } from '@/lib/time';
 import { useUi } from '@/state/ui';
 import { AlertBell } from '@/components/alerts/AlertBell';
+import { PushSubscribe } from '@/components/alerts/PushSubscribe';
 
 const THREAT_TONE: Record<string, string> = {
   NOMINAL: 'var(--ok)',
@@ -45,6 +46,7 @@ export function TopBar() {
         </span>
       )}
 
+      <PushSubscribe />
       <AlertBell />
       <span className="pill" style={{ color: THREAT_TONE[level] }} title={threat ? `score ${threat.score.toFixed(1)}` : undefined}>
         <span className="dot" style={{ background: THREAT_TONE[level] }} />
