@@ -1,6 +1,7 @@
 import { IconLayer } from '@deck.gl/layers';
 import { type LayerDef } from '../types';
-import { useSnapshot, type SnapshotMover } from './aircraft';
+import { type SnapshotMover } from './aircraft';
+import { useAnimatedSnapshot } from '@/map/useAnimatedSnapshot';
 
 // BC Ferries from the positions:ferry snapshot (never raw entity scans —
 // ARCHITECTURE §10). Positions are schedule-derived estimates until the AIS
@@ -14,7 +15,7 @@ export const ferriesLayer: LayerDef<SnapshotMover> = {
   cluster: 'Seas (Marine)',
   defaultOn: true,
   useData() {
-    return useSnapshot('positions:ferry');
+    return useAnimatedSnapshot('positions:ferry');
   },
   toLayers(data) {
     return [

@@ -2,6 +2,7 @@ import { useQuery } from 'convex/react';
 import { IconLayer } from '@deck.gl/layers';
 import { api } from '../../../convex/_generated/api';
 import { ACCENT_LIVE, type LayerDef } from '../types';
+import { useAnimatedSnapshot } from '@/map/useAnimatedSnapshot';
 
 // Live aircraft from the positions:aircraft snapshot (never raw entity scans —
 // ARCHITECTURE §10). Oriented chevrons, accent-live cyan.
@@ -32,7 +33,7 @@ export const aircraftLayer: LayerDef<SnapshotMover> = {
   cluster: 'Skies (Air)',
   defaultOn: true,
   useData() {
-    return useSnapshot('positions:aircraft');
+    return useAnimatedSnapshot('positions:aircraft');
   },
   toLayers(data) {
     return [

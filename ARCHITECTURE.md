@@ -407,6 +407,11 @@ interface LayerDef<T> {
 }
 ```
 
+**Map interaction contract (binding, per Samuel 2026-06-11):**
+1. **Movers animate continuously** — "as live as possible." Between fixes, positions are dead-reckoned client-side from last lat/lng + heading + speed (shared `useAnimatedSnapshot` hook, ~1s re-projection); extrapolation caps at 5 min, then the marker freezes and takes stale styling. The inspector always shows the true fix age — extrapolation is presentation, never data.
+2. **Hover = path.** Hovering any mover fetches its recent track (`tracks.trail` query by kind+extId) and draws a fading PathLayer trail so movement history is visible at a glance. Hover off clears it.
+3. **Click = the thing itself.** Every pickable marker opens the INSPECTOR panel: cameras play their live feed in-platform via `<LiveMedia>` (snapshot refresh / HLS / sanctioned iframe / audio with the Orcasound latest.txt resolver); aircraft/vessels/ferries/buses show identity + state details + their flight/voyage path drawn on the map; signals show title/severity/summary/rationale/provenance. No marker is a dead end.
+
 The layer rail, live counts, "updated Xs ago" chips, and ⌘K layer jumps all derive from this registry — no page hand-wires deck.gl. Conventions: `ScatterplotLayer` pulses for new/critical via a time-driven radius transition; `IconLayer` oriented by `heading`; `TripsLayer` for trails (data from `tracks`); `GeoJsonLayer` for polygons (alerts/fires/fences); raster overlays (GeoMet radar/satellite/lightning-density) are **MapLibre raster sources** (CORS-open, browser-direct), toggled through the same registry interface with a `kind: "raster"` variant. Two hard conventions for sub-agents: (1) **mover layers read `snapshots` rows** (`positions:<kind>`), never raw `entities` scans — bounds reactive re-execution and bandwidth (§11); (2) **TripsLayer timestamps are rebased to seconds since window start** in the layer transform — epoch-ms in float32 quantizes at ~2 min and freezes trails.
 
 `<LiveMedia>` (BRIEF §6): resolves `cameras.kind` → snapshot (`<img>` + cache-bust on `refreshSec`, pause offscreen) / hls (hls.js; Safari native) / iframe (sandboxed) / audio (`<audio>` + hls.js for Orcasound). Every instance renders attribution + "updated Xs ago". Orcasound needs the `latest.txt → live.m3u8` folder-rollover resolver from SOURCES.md.

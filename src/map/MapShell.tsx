@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import maplibregl from 'maplibre-gl';
 import { MapboxOverlay } from '@deck.gl/mapbox';
-import type { Layer } from '@deck.gl/core';
+import type { Layer, PickingInfo } from '@deck.gl/core';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { VI_BBOX } from '@/lib/bbox';
 import { useUi } from '@/state/ui';
@@ -21,10 +21,14 @@ export interface RasterToggle {
 export function MapShell({
   layers = [],
   rasters = [],
+  onPickHover,
+  onPickClick,
   children,
 }: {
   layers?: Layer[];
   rasters?: RasterToggle[];
+  onPickHover?: (info: PickingInfo) => void;
+  onPickClick?: (info: PickingInfo) => void;
   children?: ReactNode;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -82,8 +86,13 @@ export function MapShell({
   }, [setReticle]);
 
   useEffect(() => {
-    overlayRef.current?.setProps({ layers });
-  }, [layers]);
+    overlayRef.current?.setProps({
+      layers,
+      onHover: onPickHover,
+      onClick: onPickClick,
+      getCursor: ({ isHovering }: { isHovering: boolean }) => (isHovering ? 'pointer' : ''),
+    });
+  }, [layers, onPickHover, onPickClick]);
 
   // Raster overlays: sync sources/layers with toggles, insert below the first
   // symbol layer so place labels stay readable above radar/satellite imagery.

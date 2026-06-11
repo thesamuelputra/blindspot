@@ -1,5 +1,6 @@
 import { IconLayer } from '@deck.gl/layers';
-import { useSnapshot, type SnapshotMover } from './aircraft';
+import { type SnapshotMover } from './aircraft';
+import { useAnimatedSnapshot } from '@/map/useAnimatedSnapshot';
 import type { LayerDef } from '../types';
 
 // Radiosondes from the positions:balloon snapshot (sondehub feed). Amber
@@ -12,7 +13,7 @@ export const sondesLayer: LayerDef<SnapshotMover> = {
   cluster: 'RF / Signals',
   defaultOn: true,
   useData() {
-    return useSnapshot('positions:balloon');
+    return useAnimatedSnapshot('positions:balloon');
   },
   toLayers(data) {
     return [

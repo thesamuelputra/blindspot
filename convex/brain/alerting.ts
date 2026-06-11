@@ -48,7 +48,14 @@ export const notify = internalAction({
         console.error('ntfy send failed:', e);
       }
     }
-    // web push fan-out joins here via internal.brain.push (Phase 4 wave)
+    // Web push fan-out for warning and critical (brain/push.ts, "use node").
+    if (args.severity === 'warning' || args.severity === 'critical') {
+      await ctx.scheduler.runAfter(0, internal.brain.push.sendToAll, {
+        title: args.title,
+        body: args.body,
+        severity: args.severity,
+      });
+    }
   },
 });
 

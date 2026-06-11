@@ -1,6 +1,7 @@
 import { ScatterplotLayer } from '@deck.gl/layers';
 import type { LayerDef } from '../types';
-import { useSnapshot, type SnapshotMover } from './aircraft';
+import { type SnapshotMover } from './aircraft';
+import { useAnimatedSnapshot } from '@/map/useAnimatedSnapshot';
 
 // BC Transit buses (Victoria Regional) from the positions:bus snapshot —
 // never raw entity scans (ARCHITECTURE §10). Dense fleet (~200+ at peak),
@@ -12,7 +13,7 @@ export const transitLayer: LayerDef<SnapshotMover> = {
   cluster: 'Ground (Mobility)',
   defaultOn: false,
   useData() {
-    return useSnapshot('positions:bus');
+    return useAnimatedSnapshot('positions:bus');
   },
   toLayers(data) {
     return [

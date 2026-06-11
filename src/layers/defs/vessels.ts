@@ -1,6 +1,7 @@
 import { IconLayer } from '@deck.gl/layers';
 import type { LayerDef } from '../types';
-import { useSnapshot, type SnapshotMover } from './aircraft';
+import { type SnapshotMover } from './aircraft';
+import { useAnimatedSnapshot } from '@/map/useAnimatedSnapshot';
 
 // Live AIS vessels (worker-fed, positions:vessel snapshot). Light chevrons —
 // shows last-known + stale chip when the worker is down (graceful, D2).
@@ -11,7 +12,7 @@ export const vesselsLayer: LayerDef<SnapshotMover> = {
   cluster: 'Seas (Marine)',
   defaultOn: true,
   useData() {
-    return useSnapshot('positions:vessel');
+    return useAnimatedSnapshot('positions:vessel');
   },
   toLayers(data) {
     return [
