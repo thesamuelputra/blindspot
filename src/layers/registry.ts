@@ -7,6 +7,7 @@ import { firesLayer } from './defs/fires';
 import { hotspotsLayer } from './defs/hotspots';
 import { outagesLayer } from './defs/outages';
 import { roadEventsLayer } from './defs/roadEvents';
+import { aircraftLayer } from './defs/aircraft';
 
 // One entry per map layer. Wave agents add defs in src/layers/defs/; the
 // orchestrator merges them here (serialized — ARCHITECTURE §2/§10).
@@ -23,4 +24,5 @@ export const LAYER_REGISTRY: LayerDef[] = [
   quakesLayer as LayerDef,
   outagesLayer as LayerDef,
   roadEventsLayer as LayerDef,
+  aircraftLayer as LayerDef,
 ];

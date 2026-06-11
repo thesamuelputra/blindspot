@@ -12,6 +12,7 @@ import type * as admin from "../admin.js";
 import type * as alerts from "../alerts.js";
 import type * as auth from "../auth.js";
 import type * as crons from "../crons.js";
+import type * as feeds_adsbAircraft from "../feeds/adsbAircraft.js";
 import type * as feeds_bcEvacOrders from "../feeds/bcEvacOrders.js";
 import type * as feeds_bchydroOutages from "../feeds/bchydroOutages.js";
 import type * as feeds_bcwsFires from "../feeds/bcwsFires.js";
@@ -28,8 +29,10 @@ import type * as http from "../http.js";
 import type * as lib_fetchSource from "../lib/fetchSource.js";
 import type * as lib_geo from "../lib/geo.js";
 import type * as lib_ingest from "../lib/ingest.js";
+import type * as lib_movers from "../lib/movers.js";
 import type * as lib_xml from "../lib/xml.js";
 import type * as signals from "../signals.js";
+import type * as snapshots from "../snapshots.js";
 import type * as sources from "../sources.js";
 
 import type {
@@ -43,6 +46,7 @@ declare const fullApi: ApiFromModules<{
   alerts: typeof alerts;
   auth: typeof auth;
   crons: typeof crons;
+  "feeds/adsbAircraft": typeof feeds_adsbAircraft;
   "feeds/bcEvacOrders": typeof feeds_bcEvacOrders;
   "feeds/bchydroOutages": typeof feeds_bchydroOutages;
   "feeds/bcwsFires": typeof feeds_bcwsFires;
@@ -59,8 +63,10 @@ declare const fullApi: ApiFromModules<{
   "lib/fetchSource": typeof lib_fetchSource;
   "lib/geo": typeof lib_geo;
   "lib/ingest": typeof lib_ingest;
+  "lib/movers": typeof lib_movers;
   "lib/xml": typeof lib_xml;
   signals: typeof signals;
+  snapshots: typeof snapshots;
   sources: typeof sources;
 }>;
 

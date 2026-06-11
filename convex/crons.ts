@@ -11,6 +11,7 @@ crons.interval('usgs-quakes', { seconds: 121 }, internal.feeds.usgsQuakes.sync, 
 crons.interval('eccc-weather-alerts', { seconds: 113 }, internal.feeds.ecccAlerts.sync, {});
 crons.interval('ntwc-tsunami', { seconds: 119 }, internal.feeds.ntwcTsunami.sync, {});
 crons.interval('naad-pelmorex', { seconds: 107 }, internal.feeds.naadPelmorex.sync, {});
+crons.interval('adsb-aircraft', { seconds: 127 }, internal.feeds.adsbAircraft.sync, {});
 
 // ---- medium lane ----
 crons.interval('nrcan-quakes', { seconds: 240 }, internal.feeds.nrcanQuakes.sync, {});
