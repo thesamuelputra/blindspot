@@ -1,0 +1,25 @@
+# dependencies
+node_modules/
+
+# builds
+dist/
+build/
+.vercel/
+
+# env / secrets — never commit
+.env
+.env.*
+!.env.example
+
+# convex local state
+.convex/
+
+# logs & junk
+*.log
+.DS_Store
+*.local
+
+# editor
+.idea/
+.vscode/*
+!.vscode/extensions.json
