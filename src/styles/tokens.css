@@ -111,6 +111,32 @@ body {
   filter: invert(0.7);
 }
 
+/* rolling event ticker (BRIEF §12 live feed) */
+@keyframes ticker-roll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.ticker-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+  white-space: nowrap;
+  animation: ticker-roll 90s linear infinite;
+  will-change: transform;
+}
+.ticker-viewport:hover .ticker-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none;
+  }
+}
+
 /* faint scanlines on chrome panels (BRIEF §12) — texture, not decoration */
 .scanlines {
   position: relative;

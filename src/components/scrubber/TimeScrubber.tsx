@@ -40,7 +40,8 @@ function formatUtcStamp(ts: number): string {
 
 const chrome: CSSProperties = {
   position: 'absolute',
-  bottom: 12,
+  // sits above the rolling event ticker (which owns the bottom 12px strip)
+  bottom: 50,
   zIndex: 15,
   display: 'flex',
   alignItems: 'center',

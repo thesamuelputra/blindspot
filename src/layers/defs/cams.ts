@@ -27,7 +27,7 @@ export const camsLayer: LayerDef<Camera> = {
       new IconLayer<Camera>({
         id: 'cams',
         data,
-        iconAtlas: '/icons/camera.png',
+        iconAtlas: '/icons/cctv.png',
         iconMapping: { cam: { x: 0, y: 0, width: 64, height: 64, mask: true } },
         getIcon: () => 'cam',
         getPosition: (d) => [d.lng, d.lat],

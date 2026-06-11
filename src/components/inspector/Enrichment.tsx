@@ -1,0 +1,131 @@
+import { useEffect, useState } from 'react';
+import { useAction, useQuery } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
+
+// Intrinsic detail panels (Samuel's contract: a click shows what the thing IS,
+// who owns it, what it carries, where it is going). Aircraft enrichment is an
+// action (external APIs, cached server-side); ferry is a static lookup.
+
+function Field({ k, v }: { k: string; v: string | number | undefined | null }) {
+  if (v === undefined || v === null || v === '') return null;
+  return (
+    <div style={{ display: 'flex', gap: 8, padding: '3px 0', borderBottom: '1px solid var(--border-hairline)' }}>
+      <span className="microlabel" style={{ width: 92, flexShrink: 0, paddingTop: 2 }}>
+        {k}
+      </span>
+      <span className="mono" style={{ color: 'var(--text-1)', wordBreak: 'break-word' }}>
+        {String(v)}
+      </span>
+    </div>
+  );
+}
+
+interface AircraftEnrichment {
+  registration?: string;
+  typeName?: string;
+  manufacturer?: string;
+  owner?: string;
+  photo?: { thumb: string; large?: string; link: string; photographer?: string };
+  spec?: {
+    name: string;
+    role: string;
+    pax?: number;
+    engines?: string;
+    cruiseKt?: number;
+    mtowKg?: number;
+  } | null;
+  route?: { airline?: string; origin?: string; destination?: string };
+}
+
+export function AircraftEnrichmentPanel({ hex, callsign }: { hex: string; callsign?: string }) {
+  const enrich = useAction(api.enrich.aircraft);
+  const [data, setData] = useState<AircraftEnrichment | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let live = true;
+    setLoading(true);
+    setData(null);
+    void enrich({ hex, callsign })
+      .then((r) => {
+        if (live) setData(r as AircraftEnrichment | null);
+      })
+      .finally(() => {
+        if (live) setLoading(false);
+      });
+    return () => {
+      live = false;
+    };
+  }, [enrich, hex, callsign]);
+
+  if (loading) {
+    return (
+      <div className="microlabel" style={{ padding: '8px 0' }}>
+        RESOLVING AIRFRAME…
+      </div>
+    );
+  }
+  if (!data || (!data.owner && !data.photo && !data.spec)) return null;
+
+  return (
+    <div style={{ marginBottom: 10 }}>
+      {data.photo && (
+        <a href={data.photo.link} target="_blank" rel="noreferrer" style={{ display: 'block' }}>
+          <img
+            src={data.photo.large ?? data.photo.thumb}
+            alt={data.typeName ?? 'aircraft'}
+            style={{ width: '100%', display: 'block', border: '1px solid var(--border-hairline)' }}
+          />
+          {data.photo.photographer && (
+            <div className="microlabel" style={{ padding: '3px 0', color: 'var(--text-3)' }}>
+              PHOTO · {data.photo.photographer} / planespotters.net
+            </div>
+          )}
+        </a>
+      )}
+      <Field k="TYPE" v={data.spec?.name ?? data.typeName} />
+      <Field k="OPERATOR" v={data.owner} />
+      <Field k="REG" v={data.registration} />
+      {data.route?.airline && <Field k="AIRLINE" v={data.route.airline} />}
+      {data.route?.origin && <Field k="FROM" v={data.route.origin} />}
+      {data.route?.destination && <Field k="TO" v={data.route.destination} />}
+      <Field k="MAX PAX" v={data.spec?.pax} />
+      <Field k="ENGINES" v={data.spec?.engines} />
+      <Field k="CRUISE" v={data.spec?.cruiseKt ? `${data.spec.cruiseKt} kt` : undefined} />
+    </div>
+  );
+}
+
+interface FerryEnrichment {
+  spec?: {
+    name: string;
+    class?: string;
+    builtYear?: number;
+    carCapacity?: number;
+    passengerCapacity?: number;
+    lengthM?: number;
+    serviceSpeedKn?: number;
+  } | null;
+  routeName?: string;
+}
+
+export function FerryEnrichmentPanel({ extId, route }: { extId: string; route?: string }) {
+  const data = useQuery(api.enrich.ferry, { extId, route }) as FerryEnrichment | null | undefined;
+  if (!data || (!data.spec && !data.routeName)) return null;
+  const s = data.spec;
+  return (
+    <div style={{ marginBottom: 10 }}>
+      {data.routeName && <Field k="ROUTE" v={data.routeName} />}
+      {s && (
+        <>
+          <Field k="CLASS" v={s.class ? `${s.class} class` : undefined} />
+          <Field k="BUILT" v={s.builtYear} />
+          <Field k="VEHICLES" v={s.carCapacity ? `${s.carCapacity} cars` : undefined} />
+          <Field k="PASSENGERS" v={s.passengerCapacity} />
+          <Field k="LENGTH" v={s.lengthM ? `${s.lengthM} m` : undefined} />
+          <Field k="SERVICE SPD" v={s.serviceSpeedKn ? `${s.serviceSpeedKn} kn` : undefined} />
+        </>
+      )}
+    </div>
+  );
+}

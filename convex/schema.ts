@@ -262,4 +262,13 @@ export default defineSchema({
     json: v.string(), // compact payload, updated at most every 30s
     updatedAt: v.number(),
   }).index('by_key', ['key']),
+
+  // lazily-fetched intrinsic detail for an inspected entity (photo, owner,
+  // specs, route). Keyed "ac:<hex>" | "ferry:<extId>". Cached so a repeatedly
+  // inspected mover hits the external enrichment APIs at most once per TTL.
+  enrichments: defineTable({
+    key: v.string(),
+    json: v.string(),
+    fetchedAt: v.number(),
+  }).index('by_key', ['key']),
 });
