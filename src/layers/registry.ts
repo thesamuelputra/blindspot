@@ -24,6 +24,8 @@ import { evChargersLayer } from './defs/evChargers';
 import { pm25Layer } from './defs/pm25';
 import { gpsjamLayer } from './defs/gpsjam';
 import { gibsTruecolorLayer } from './defs/gibsRasters';
+import { fireDangerLayer, smokeLayer } from './defs/fireRasters';
+import { fencesLayer } from '../components/fences/fencesLayerDef';
 
 // One entry per map layer. Wave agents add defs in src/layers/defs/; the
 // orchestrator merges them here (serialized — ARCHITECTURE §2/§10).
@@ -34,10 +36,13 @@ export const LAYER_REGISTRY: LayerDef[] = [
   satelliteLayer,
   lightningLayer,
   gibsTruecolorLayer,
+  fireDangerLayer,
+  smokeLayer,
   gpsjamLayer as LayerDef,
   alertsLayer as LayerDef,
   firesLayer as LayerDef,
   closuresLayer as LayerDef,
+  fencesLayer as LayerDef,
   tremorLayer as LayerDef,
   hotspotsLayer as LayerDef,
   quakesLayer as LayerDef,

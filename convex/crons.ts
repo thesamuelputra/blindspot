@@ -68,6 +68,7 @@ crons.interval('avalanche-canada', { seconds: 21617 }, internal.feeds.avalancheC
 crons.interval('bc-drought', { seconds: 43201 }, internal.feeds.bcDrought.sync, {});
 crons.interval('bc-snow', { seconds: 21619 }, internal.feeds.bcSnow.sync, {});
 crons.interval('bc-parks', { seconds: 21631 }, internal.feeds.bcParks.sync, {});
+crons.interval('bcws-bans', { seconds: 21613 }, internal.feeds.bcwsBans.sync, {});
 crons.interval('who-outbreaks', { seconds: 21647 }, internal.feeds.whoOutbreaks.sync, {});
 crons.interval('celestrak', { seconds: 86401 }, internal.feeds.celestrak.sync, {});
 crons.interval('nasa-neo', { seconds: 86411 }, internal.feeds.nasaNeo.sync, {});

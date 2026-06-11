@@ -145,7 +145,7 @@ export function SystemPage() {
           minHeight: '100%',
         }}
       >
-        <header style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--s3)' }}>
+        <header style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--s3)', flexWrap: 'wrap' }}>
           <span className="mono" style={{ fontSize: 14, fontWeight: 700, letterSpacing: '0.14em' }}>
             SYSTEM
           </span>
@@ -224,6 +224,10 @@ export function SystemPage() {
               </SortButton>
             </div>
 
+            {/* On narrow viewports the grid scrolls sideways instead of
+                silently clipping columns; minWidth keeps every column real. */}
+            <div style={{ overflowX: 'auto' }}>
+            <div style={{ minWidth: 600 }}>
             <div
               style={{
                 display: 'grid',
@@ -348,6 +352,8 @@ export function SystemPage() {
                 })}
               </div>
             ))}
+            </div>
+            </div>
           </section>
 
           {/* regional threat */}

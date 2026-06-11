@@ -1,28 +1,32 @@
 import { Link } from '@tanstack/react-router';
+import { useMediaQuery } from '@/lib/useMediaQuery';
 
-const PAGES: Array<{ to: string; label: string }> = [
-  { to: '/command', label: 'COMMAND' },
-  { to: '/hazard', label: 'HAZARD' },
-  { to: '/skies-seas', label: 'SKIES & SEAS' },
-  { to: '/ground', label: 'GROUND' },
-  { to: '/signals', label: 'SIGNALS' },
-  { to: '/infrastructure', label: 'INFRA' },
-  { to: '/pulse', label: 'PULSE' },
-  { to: '/environment', label: 'ENVIRO' },
-  { to: '/space', label: 'SPACE' },
-  { to: '/analyst', label: 'ANALYST' },
-  { to: '/incidents', label: 'INCIDENTS' },
-  { to: '/world', label: 'WORLD' },
-  { to: '/cams', label: 'CAMS' },
-  { to: '/system', label: 'SYSTEM' },
-  { to: '/wall', label: 'WALL' },
+const PAGES: Array<{ to: string; label: string; code: string }> = [
+  { to: '/command', label: 'COMMAND', code: 'CO' },
+  { to: '/hazard', label: 'HAZARD', code: 'HA' },
+  { to: '/skies-seas', label: 'SKIES & SEAS', code: 'SK' },
+  { to: '/ground', label: 'GROUND', code: 'GR' },
+  { to: '/signals', label: 'SIGNALS', code: 'SI' },
+  { to: '/infrastructure', label: 'INFRA', code: 'IN' },
+  { to: '/pulse', label: 'PULSE', code: 'PU' },
+  { to: '/environment', label: 'ENVIRO', code: 'EN' },
+  { to: '/space', label: 'SPACE', code: 'SP' },
+  { to: '/analyst', label: 'ANALYST', code: 'AN' },
+  { to: '/incidents', label: 'INCIDENTS', code: 'IC' },
+  { to: '/world', label: 'WORLD', code: 'WO' },
+  { to: '/cams', label: 'CAMS', code: 'CA' },
+  { to: '/system', label: 'SYSTEM', code: 'SY' },
+  { to: '/wall', label: 'WALL', code: 'WA' },
 ];
 
 export function NavRail() {
+  // Below 880px the rail collapses to two-letter codes so the map keeps room.
+  const compact = useMediaQuery('(max-width: 879px)');
+
   return (
     <nav
       style={{
-        width: 132,
+        width: compact ? 44 : 132,
         flexShrink: 0,
         background: 'var(--bg-1)',
         borderRight: '1px solid var(--border-hairline)',
@@ -36,9 +40,11 @@ export function NavRail() {
           key={p.to}
           to={p.to}
           className="mono"
+          title={p.label}
           style={{
             display: 'block',
-            padding: '7px var(--s4)',
+            padding: compact ? '7px 0' : '7px var(--s4)',
+            textAlign: compact ? 'center' : undefined,
             fontSize: 10,
             letterSpacing: '0.12em',
             textDecoration: 'none',
@@ -54,19 +60,21 @@ export function NavRail() {
             },
           }}
         >
-          {p.label}
+          {compact ? p.code : p.label}
         </Link>
       ))}
       <div style={{ flex: 1 }} />
-      <div
-        className="microlabel"
-        style={{ padding: '10px 8px', fontSize: 8, lineHeight: 1.6, color: 'var(--text-3)' }}
-        title="Aggregated public OSINT. Informational only. Not for life safety decisions."
-      >
-        PUBLIC OSINT
-        <br />
-        NOT FOR LIFE SAFETY
-      </div>
+      {!compact && (
+        <div
+          className="microlabel"
+          style={{ padding: '10px 8px', fontSize: 8, lineHeight: 1.6, color: 'var(--text-3)' }}
+          title="Aggregated public OSINT. Informational only. Not for life safety decisions."
+        >
+          PUBLIC OSINT
+          <br />
+          NOT FOR LIFE SAFETY
+        </div>
+      )}
       </div>
     </nav>
   );

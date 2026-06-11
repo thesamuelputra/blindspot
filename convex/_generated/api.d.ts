@@ -45,6 +45,7 @@ import type * as feeds_bcTransit from "../feeds/bcTransit.js";
 import type * as feeds_bcTransitIngest from "../feeds/bcTransitIngest.js";
 import type * as feeds_bccdcWastewater from "../feeds/bccdcWastewater.js";
 import type * as feeds_bchydroOutages from "../feeds/bchydroOutages.js";
+import type * as feeds_bcwsBans from "../feeds/bcwsBans.js";
 import type * as feeds_bcwsFires from "../feeds/bcwsFires.js";
 import type * as feeds_ccgNotship from "../feeds/ccgNotship.js";
 import type * as feeds_celestrak from "../feeds/celestrak.js";
@@ -158,6 +159,7 @@ declare const fullApi: ApiFromModules<{
   "feeds/bcTransitIngest": typeof feeds_bcTransitIngest;
   "feeds/bccdcWastewater": typeof feeds_bccdcWastewater;
   "feeds/bchydroOutages": typeof feeds_bchydroOutages;
+  "feeds/bcwsBans": typeof feeds_bcwsBans;
   "feeds/bcwsFires": typeof feeds_bcwsFires;
   "feeds/ccgNotship": typeof feeds_ccgNotship;
   "feeds/celestrak": typeof feeds_celestrak;

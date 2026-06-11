@@ -2,15 +2,18 @@ import { useState } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import { useNow, formatUtc } from '@/lib/time';
+import { useMediaQuery } from '@/lib/useMediaQuery';
 
 // Latest INTSUM on the COMMAND map (BRIEF §8.6) — collapsed to one line,
 // expands on click. Full INTSUM history lives on the ANALYST page.
+// Hidden below 880px: no room next to the layer rail; ANALYST carries it.
 export function IntsumCard() {
   const latest = useQuery(api.intsums.latest, {});
   const [open, setOpen] = useState(false);
   const now = useNow(30_000);
+  const compact = useMediaQuery('(max-width: 879px)');
 
-  if (!latest) return null;
+  if (compact || !latest) return null;
   const age = Math.floor((now - latest.at) / 60_000);
 
   return (

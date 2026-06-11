@@ -12,6 +12,9 @@ import { Inspector } from '@/components/inspector/Inspector';
 import { MapShell, type RasterToggle } from './MapShell';
 import { TimeScrubber, useReplayWindow } from '@/components/scrubber/TimeScrubber';
 import { buildReplayLayers } from './replayLayers';
+import { FencePanel } from '@/components/fences/FencePanel';
+import { useFenceDrawState } from '@/components/fences/fenceStore';
+import { buildFencePreviewLayer } from '@/components/fences/fencesLayerDef';
 
 // Which mover kind each pickable mover layer carries (pick mapping).
 const MOVER_KIND_BY_LAYER: Record<string, string> = {
@@ -84,6 +87,9 @@ export function MapView({ page }: { page: string }) {
   const inspect = useUi((s) => s.inspect);
   const setInspect = useUi((s) => s.setInspect);
   const timeMode = useUi((s) => s.time.mode);
+  const fenceDrawing = useFenceDrawState((s) => s.drawing);
+  const fencePoints = useFenceDrawState((s) => s.points);
+  const addFencePoint = useFenceDrawState((s) => s.addPoint);
   const playhead = useUi((s) => s.time.t);
   const replayWin = useReplayWindow(); // null in live mode
   const replayTracks = useQuery(
@@ -141,6 +147,9 @@ export function MapView({ page }: { page: string }) {
     );
   }
 
+  // in-progress fence drawing preview (vertices + closing ring, BRIEF §8.2)
+  if (fenceDrawing) deckLayers.push(...buildFencePreviewLayer(fencePoints));
+
   // expanding-ring pulse on fresh warning/critical signals (BRIEF §12)
   const recentForPulse = useQuery(api.signals.recent, { limit: 30 }) ?? [];
   const pulses = recentForPulse.filter(
@@ -186,6 +195,11 @@ export function MapView({ page }: { page: string }) {
 
   const onPickClick = useCallback(
     (info: PickingInfo) => {
+      // fence drawing eats map clicks: vertices accumulate, inspector stays shut
+      if (useFenceDrawState.getState().drawing) {
+        if (info.coordinate) addFencePoint([info.coordinate[0], info.coordinate[1]]);
+        return;
+      }
       if (!info.object || !info.layer) {
         setInspect(null);
         return;
@@ -203,12 +217,13 @@ export function MapView({ page }: { page: string }) {
       }
       setInspect({ type: 'signal', data: info.object as Record<string, unknown> });
     },
-    [setInspect],
+    [setInspect, addFencePoint],
   );
 
   return (
     <MapShell layers={deckLayers} rasters={rasters} onPickHover={onPickHover} onPickClick={onPickClick}>
       <LayerRail defs={defs} dataById={dataById} />
+      {defs.some((d) => d.id === 'fences') && <FencePanel />}
       <TimeScrubber />
       {inspect && <Inspector target={inspect} trail={inspectTrail ?? null} onClose={() => setInspect(null)} />}
     </MapShell>
