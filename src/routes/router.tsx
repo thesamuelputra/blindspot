@@ -8,12 +8,24 @@ import {
 import { Authenticated, Unauthenticated, AuthLoading } from 'convex/react';
 import { TopBar } from '@/components/shell/TopBar';
 import { NavRail } from '@/components/shell/NavRail';
-import { PagePlaceholder } from '@/components/shell/PagePlaceholder';
 import { LoginGate } from '@/components/auth/LoginGate';
 import { CommandPalette } from '@/components/shell/CommandPalette';
 import { CommandPage } from '@/pages/CommandPage';
 import { WorldPage } from '@/pages/WorldPage';
 import { WallPage } from '@/pages/WallPage';
+import { IncidentsPage } from '@/pages/IncidentsPage';
+import { CamsPage } from '@/pages/CamsPage';
+import { SystemPage } from '@/pages/SystemPage';
+import { AnalystPage } from '@/pages/AnalystPage';
+import { HazardPage } from '@/pages/HazardPage';
+import { SkiesSeasPage } from '@/pages/SkiesSeasPage';
+import { GroundPage } from '@/pages/GroundPage';
+import { SignalsPage } from '@/pages/SignalsPage';
+import { InfraPage } from '@/pages/InfraPage';
+import { PulsePage } from '@/pages/PulsePage';
+import { EnviroPage } from '@/pages/EnviroPage';
+import { SpacePage } from '@/pages/SpacePage';
+import { AlertToasts } from '@/components/alerts/AlertToasts';
 
 function Shell() {
   return (
@@ -39,6 +51,7 @@ function Shell() {
           </div>
         </div>
         <CommandPalette />
+        <AlertToasts />
       </Authenticated>
     </>
   );
@@ -60,30 +73,26 @@ const commandRoute = createRoute({
   component: CommandPage,
 });
 
-const placeholder = (path: string, code: string, note?: string) =>
-  createRoute({
-    getParentRoute: () => rootRoute,
-    path,
-    component: () => <PagePlaceholder code={code} note={note} />,
-  });
+const page = (path: string, component: () => React.JSX.Element) =>
+  createRoute({ getParentRoute: () => rootRoute, path, component });
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
   commandRoute,
-  placeholder('/hazard', 'HAZARD // SEISMIC · WX · FIRE · TSUNAMI'),
-  placeholder('/skies-seas', 'SKIES & SEAS // AIR · MARINE'),
-  placeholder('/ground', 'GROUND // ROADS · TRANSIT · POWER'),
-  placeholder('/signals', 'SIGNALS // RF · APRS · SONDES'),
-  placeholder('/infrastructure', 'INFRASTRUCTURE // GRID · NET · CELLS'),
-  placeholder('/pulse', 'PULSE // NEWS · CIVIC · EVENTS'),
-  placeholder('/environment', 'ENVIRONMENT // AQ · HYDRO · OCEAN'),
-  placeholder('/space', 'SPACE // SATS · LAUNCHES · AURORA'),
-  placeholder('/analyst', 'ANALYST // NL CONSOLE + INTSUM', 'BRAIN ARRIVES IN PHASE 4'),
-  placeholder('/incidents', 'INCIDENTS // WORKSPACE', 'BRAIN ARRIVES IN PHASE 4'),
-  createRoute({ getParentRoute: () => rootRoute, path: '/world', component: WorldPage }),
-  placeholder('/cams', 'CAMS // LIVE MEDIA WALL'),
-  placeholder('/system', 'SYSTEM // FEED HEALTH + OPS BOARD'),
-  createRoute({ getParentRoute: () => rootRoute, path: '/wall', component: WallPage }),
+  page('/hazard', HazardPage),
+  page('/skies-seas', SkiesSeasPage),
+  page('/ground', GroundPage),
+  page('/signals', SignalsPage),
+  page('/infrastructure', InfraPage),
+  page('/pulse', PulsePage),
+  page('/environment', EnviroPage),
+  page('/space', SpacePage),
+  page('/analyst', AnalystPage),
+  page('/incidents', IncidentsPage),
+  page('/world', WorldPage),
+  page('/cams', CamsPage),
+  page('/system', SystemPage),
+  page('/wall', WallPage),
 ]);
 
 export const router = createRouter({ routeTree });

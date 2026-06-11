@@ -9,6 +9,8 @@ import type { LayerData } from '@/layers/types';
 import { useUi, type CameraDoc } from '@/state/ui';
 import { Inspector } from '@/components/inspector/Inspector';
 import { MapShell, type RasterToggle } from './MapShell';
+import { TimeScrubber, useReplayWindow } from '@/components/scrubber/TimeScrubber';
+import { buildReplayLayers } from './replayLayers';
 
 // Which mover kind each pickable mover layer carries (pick mapping).
 const MOVER_KIND_BY_LAYER: Record<string, string> = {
@@ -18,6 +20,24 @@ const MOVER_KIND_BY_LAYER: Record<string, string> = {
   transit: 'bus',
   sondes: 'balloon',
 };
+
+// Live layers replaced while replaying: movers (TripsLayer trails take over)
+// and point signal layers (the replay-signals scatter takes over). Polygon
+// overlays (alerts, fires, closures, gpsjam), station layers and rasters stay.
+const REPLAY_REPLACED = new Set([
+  'aircraft',
+  'vessels',
+  'ferries',
+  'transit',
+  'sondes',
+  'quakes',
+  'tremor',
+  'hotspots',
+  'outages',
+  'road-events',
+  'marine-notices',
+]);
+const REPLAY_KINDS = ['aircraft', 'vessel', 'ferry', 'bus', 'balloon'];
 
 const TRAIL_HOVER_MS = 2 * 3600_000;
 const TRAIL_INSPECT_MS = 12 * 3600_000;
@@ -62,6 +82,17 @@ export function MapView({ page }: { page: string }) {
   const setHoverMover = useUi((s) => s.setHoverMover);
   const inspect = useUi((s) => s.inspect);
   const setInspect = useUi((s) => s.setInspect);
+  const timeMode = useUi((s) => s.time.mode);
+  const playhead = useUi((s) => s.time.t);
+  const replayWin = useReplayWindow(); // null in live mode
+  const replayTracks = useQuery(
+    api.replay.moverTracksWindow,
+    replayWin ? { kinds: REPLAY_KINDS, fromMs: replayWin.fromMs, toMs: replayWin.toMs } : 'skip',
+  );
+  const replaySignals = useQuery(
+    api.replay.signalsWindow,
+    replayWin ? { fromMs: replayWin.fromMs, toMs: replayWin.toMs } : 'skip',
+  );
   const defs = LAYER_REGISTRY.filter((d) => d.pages.includes(page));
 
   const dataById: Record<string, LayerData> = {};
@@ -79,7 +110,8 @@ export function MapView({ page }: { page: string }) {
     // array, so hook order is stable across renders by construction.
     const data = def.useData!();
     dataById[def.id] = data;
-    if (on) deckLayers.push(...def.toLayers!(data.data));
+    if (on && !(timeMode === 'replay' && REPLAY_REPLACED.has(def.id)))
+      deckLayers.push(...def.toLayers!(data.data));
   }
 
   // hover + inspected trails (ARCHITECTURE §10 interaction contract)
@@ -98,6 +130,15 @@ export function MapView({ page }: { page: string }) {
   );
   deckLayers.push(...trailToLayers('trail-hover', hoverTrail, [56, 189, 248]));
   deckLayers.push(...trailToLayers('trail-inspect', inspectTrail, [167, 139, 250]));
+
+  if (replayWin) {
+    deckLayers.push(
+      ...buildReplayLayers(
+        { tracks: replayTracks ?? [], signals: replaySignals ?? [], fromMs: replayWin.fromMs },
+        playhead,
+      ),
+    );
+  }
 
   const onPickHover = useCallback(
     (info: PickingInfo) => {
@@ -134,6 +175,7 @@ export function MapView({ page }: { page: string }) {
   return (
     <MapShell layers={deckLayers} rasters={rasters} onPickHover={onPickHover} onPickClick={onPickClick}>
       <LayerRail defs={defs} dataById={dataById} />
+      <TimeScrubber />
       {inspect && <Inspector target={inspect} trail={inspectTrail ?? null} onClose={() => setInspect(null)} />}
     </MapShell>
   );

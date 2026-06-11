@@ -19,6 +19,7 @@ import type * as brain_baselines from "../brain/baselines.js";
 import type * as brain_evaluate from "../brain/evaluate.js";
 import type * as brain_geofence from "../brain/geofence.js";
 import type * as brain_intsum from "../brain/intsum.js";
+import type * as brain_patternOfLife from "../brain/patternOfLife.js";
 import type * as brain_push from "../brain/push.js";
 import type * as brain_rules_aisGapSensitive from "../brain/rules/aisGapSensitive.js";
 import type * as brain_rules_index from "../brain/rules/index.js";
@@ -93,19 +94,25 @@ import type * as feeds_uvicMesh from "../feeds/uvicMesh.js";
 import type * as feeds_whoOutbreaks from "../feeds/whoOutbreaks.js";
 import type * as geofences from "../geofences.js";
 import type * as http from "../http.js";
+import type * as incidents from "../incidents.js";
 import type * as intsums from "../intsums.js";
 import type * as lib_fetchSource from "../lib/fetchSource.js";
 import type * as lib_geo from "../lib/geo.js";
 import type * as lib_ingest from "../lib/ingest.js";
 import type * as lib_movers from "../lib/movers.js";
 import type * as lib_xml from "../lib/xml.js";
+import type * as notifications from "../notifications.js";
+import type * as pageData from "../pageData.js";
 import type * as pushSubscriptions from "../pushSubscriptions.js";
+import type * as replay from "../replay.js";
 import type * as retention from "../retention.js";
 import type * as signals from "../signals.js";
 import type * as snapshots from "../snapshots.js";
 import type * as sources from "../sources.js";
+import type * as systemStats from "../systemStats.js";
 import type * as threat from "../threat.js";
 import type * as tracks from "../tracks.js";
+import type * as watchlist from "../watchlist.js";
 
 import type {
   ApiFromModules,
@@ -125,6 +132,7 @@ declare const fullApi: ApiFromModules<{
   "brain/evaluate": typeof brain_evaluate;
   "brain/geofence": typeof brain_geofence;
   "brain/intsum": typeof brain_intsum;
+  "brain/patternOfLife": typeof brain_patternOfLife;
   "brain/push": typeof brain_push;
   "brain/rules/aisGapSensitive": typeof brain_rules_aisGapSensitive;
   "brain/rules/index": typeof brain_rules_index;
@@ -199,19 +207,25 @@ declare const fullApi: ApiFromModules<{
   "feeds/whoOutbreaks": typeof feeds_whoOutbreaks;
   geofences: typeof geofences;
   http: typeof http;
+  incidents: typeof incidents;
   intsums: typeof intsums;
   "lib/fetchSource": typeof lib_fetchSource;
   "lib/geo": typeof lib_geo;
   "lib/ingest": typeof lib_ingest;
   "lib/movers": typeof lib_movers;
   "lib/xml": typeof lib_xml;
+  notifications: typeof notifications;
+  pageData: typeof pageData;
   pushSubscriptions: typeof pushSubscriptions;
+  replay: typeof replay;
   retention: typeof retention;
   signals: typeof signals;
   snapshots: typeof snapshots;
   sources: typeof sources;
+  systemStats: typeof systemStats;
   threat: typeof threat;
   tracks: typeof tracks;
+  watchlist: typeof watchlist;
 }>;
 
 /**

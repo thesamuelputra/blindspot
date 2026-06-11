@@ -76,5 +76,6 @@ crons.interval('permits', { seconds: 86441 }, internal.feeds.permits.sync, {});
 crons.interval('bccdc-wastewater', { seconds: 86461 }, internal.feeds.bccdcWastewater.sync, {});
 crons.interval('gac-travel', { seconds: 86467 }, internal.feeds.gacTravel.sync, {});
 crons.interval('extra-cams', { seconds: 86477 }, internal.feeds.extraCams.sync, {});
+crons.interval('pattern-of-life', { seconds: 86497 }, internal.brain.patternOfLife.computeAll, {});
 
 export default crons;

@@ -1,5 +1,8 @@
 import { useNow } from '@/lib/time';
 import { LiveMedia } from '@/components/media/LiveMedia';
+import { AddToIncident } from '@/components/incidents/AddToIncident';
+import { WatchToggle } from '@/components/watch/WatchToggle';
+import { PatternOfLife } from '@/components/watch/PatternOfLife';
 import type { InspectTarget } from '@/state/ui';
 
 // INSPECTOR (ARCHITECTURE §10 interaction contract): click = the thing itself.
@@ -122,8 +125,11 @@ function MoverPanel({
   }
   return (
     <div>
-      <div className="mono" style={{ fontSize: 15, fontWeight: 700, letterSpacing: '0.06em' }}>
-        {target.label}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className="mono" style={{ fontSize: 15, fontWeight: 700, letterSpacing: '0.06em', flex: 1 }}>
+          {target.label}
+        </div>
+        <WatchToggle kind={target.kind} extId={target.extId} label={target.label} />
       </div>
       <div className="microlabel" style={{ margin: '2px 0 10px' }}>
         {target.kind.toUpperCase()} · {target.extId}
@@ -142,6 +148,7 @@ function MoverPanel({
       <div className="microlabel" style={{ marginTop: 12 }}>
         PATH · LAST 12H · {trail?.points.length ?? 0} FIXES (violet trail on map)
       </div>
+      <PatternOfLife kind={target.kind} extId={target.extId} />
     </div>
   );
 }
@@ -215,6 +222,7 @@ function SignalPanel({ data }: { data: Record<string, unknown> }) {
           open source ↗
         </a>
       )}
+      {typeof data._id === 'string' && <AddToIncident signalId={data._id} />}
     </div>
   );
 }
