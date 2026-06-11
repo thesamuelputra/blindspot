@@ -28,3 +28,4 @@ build/
 .playwright-mcp/
 *.tsbuildinfo
 .vercel
+dev-dist/

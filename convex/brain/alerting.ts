@@ -85,16 +85,24 @@ export const record = internalMutation({
     const tierCount = recent.filter((n) => n.severity === args.severity).length;
     if (tierCount >= (HOURLY_CAP[args.severity] ?? 12)) return { send: false, channels: [] };
 
+    // honest delivery provenance: only channels that are actually configured
+    const channels = ['app'];
+    if (process.env.NTFY_TOPIC) channels.push('ntfy');
+    if (
+      process.env.VAPID_PRIVATE_KEY &&
+      (args.severity === 'warning' || args.severity === 'critical')
+    )
+      channels.push('push');
     await ctx.db.insert('notifications', {
       at: now,
       severity: args.severity as 'info' | 'watch' | 'warning' | 'critical',
       title: args.title,
       body: args.body,
-      channels: ['ntfy'],
+      channels,
       dedupeKey: args.dedupeKey,
       ack: false,
       signalId: args.signalId,
     });
-    return { send: true, channels: ['ntfy'] };
+    return { send: true, channels };
   },
 });

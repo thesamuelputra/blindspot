@@ -33,6 +33,7 @@ export function MapShell({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<MapboxOverlay | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
   const [map, setMap] = useState<maplibregl.Map | null>(null);
   const setReticle = useUi((s) => s.setReticle);
 
@@ -71,6 +72,12 @@ export function MapShell({
         if (!cancelled) setMap(m);
       });
 
+      // AUDIT (Phase 6): a map constructed while its pane measures 0x0 sticks
+      // at the 400x300 fallback — resize whenever the container box changes.
+      const ro = new ResizeObserver(() => m?.resize());
+      ro.observe(container);
+      resizeObserverRef.current = ro;
+
       if (import.meta.env.DEV) {
         (window as unknown as { __map?: maplibregl.Map }).__map = m;
       }
@@ -80,6 +87,8 @@ export function MapShell({
       cancelled = true;
       setReticle(null);
       overlayRef.current = null;
+      resizeObserverRef.current?.disconnect();
+      resizeObserverRef.current = null;
       setMap(null);
       m?.remove();
     };
@@ -99,7 +108,8 @@ export function MapShell({
   const requestFlyTo = useUi((s) => s.requestFlyTo);
   useEffect(() => {
     if (!map || !flyTo) return;
-    map.flyTo({ center: [flyTo.lng, flyTo.lat], zoom: flyTo.zoom ?? 10, duration: 1200 });
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    map.flyTo({ center: [flyTo.lng, flyTo.lat], zoom: flyTo.zoom ?? 10, duration: reduced ? 0 : 1200 });
     requestFlyTo(null);
   }, [map, flyTo, requestFlyTo]);
 

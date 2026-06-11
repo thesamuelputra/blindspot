@@ -4,7 +4,7 @@ import type { Feature, Polygon } from 'geojson';
 import { internalAction, internalMutation } from '../_generated/server';
 import { internal } from '../_generated/api';
 import { fetchSource } from '../lib/fetchSource';
-import { inBbox, cellOf } from '../lib/geo';
+import { inBbox, cellOf, onIslandSide } from '../lib/geo';
 import { upsertSignals, reportSuccess, reportFailure, type SourceMeta } from '../lib/ingest';
 
 // bchydro-outages — SOURCES.md: Ground (Mobility). Undocumented JSON behind the
@@ -90,7 +90,9 @@ export const sync = internalAction({
           (o) =>
             typeof o.latitude === 'number' &&
             typeof o.longitude === 'number' &&
-            inBbox(o.latitude, o.longitude),
+            inBbox(o.latitude, o.longitude) &&
+            // trim the Metro Van corner the raw bbox admits (AUDIT Phase 6)
+            onIslandSide(o.latitude, o.longitude),
         )
         .map((o) => {
           const customers = o.numCustomersOut ?? 0;

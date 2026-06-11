@@ -17,6 +17,7 @@
 | OpenCelliD / N2YO / OpenChargeMap | T3 layers | layers absent | respective portals |
 | ntfy topic (random string) | alerting | web push only | pick one, set env |
 | `OCM_KEY` | EV chargers | layer absent | openchargemap.org (free) |
+| `OPENAQ_KEY` | OpenAQ stations | largely redundant with bc-aqhi | explore.openaq.org (free) |
 | `ABUSECH_AUTH_KEY` | world cyber counts | panel n/a | abuse.ch auth portal (free) |
 | `REDDIT_CLIENT_ID`/`SECRET` | aggregate social pulse | Bluesky-only attempts | reddit.com/prefs/apps (script app, free) |
 | Fly.io (or alt) account | AIS worker hosting (~$2/mo) | AIS off; graceful | fly.io — **Samuel's call per DECISIONS D2** |

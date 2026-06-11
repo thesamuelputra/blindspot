@@ -90,14 +90,18 @@ function connect() {
 }
 
 async function flush() {
-  const batch = [];
+  // AUDIT (Phase 6): the Convex snapshot is REPLACED per batch, so a
+  // dirty-only batch made quiet vessels flicker off the map. Send the full
+  // non-stale roster whenever anything changed; dirty only gates the POST.
   const cutoff = Date.now() - 10 * 60_000;
+  let anyDirty = false;
+  const batch = [];
   for (const [mmsi, v] of vessels) {
     if (v.at < cutoff) {
       vessels.delete(mmsi); // left the area / went dark — drop locally
       continue;
     }
-    if (!v.dirty) continue;
+    if (v.dirty) anyDirty = true;
     batch.push({
       extId: mmsi,
       label: v.name ?? mmsi,
@@ -110,7 +114,7 @@ async function flush() {
     });
     v.dirty = false;
   }
-  if (batch.length === 0) return;
+  if (batch.length === 0 || !anyDirty) return;
   try {
     const res = await fetch(`${CONVEX_SITE_URL}/ingest/ais`, {
       method: 'POST',

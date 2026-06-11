@@ -28,6 +28,32 @@ export function cellOf(lat: number, lng: number): string {
   return `${snap(lat)},${snap(lng)}`;
 }
 
+// Coarse Vancouver Island + Gulf Islands land/waters polygon (lng,lat) —
+// trims the mainland sliver (Richmond/Delta/Sunshine Coast) that the raw
+// bbox corner admits (BRIEF §0 constraint 1). Deliberately rough; only for
+// feeds where mainland bleed-through is visible (AUDIT Phase 6).
+const ISLAND_POLY: Array<[number, number]> = [
+  [-125.3, 48.2],
+  [-123.0, 48.2],
+  [-122.98, 48.9],
+  [-123.55, 49.4],
+  [-124.4, 49.9],
+  [-124.8, 50.4],
+  [-125.3, 50.9],
+  [-125.3, 48.2],
+];
+
+export function onIslandSide(lat: number, lng: number): boolean {
+  // even-odd point-in-polygon over ISLAND_POLY
+  let inside = false;
+  for (let i = 0, j = ISLAND_POLY.length - 1; i < ISLAND_POLY.length; j = i++) {
+    const [xi, yi] = ISLAND_POLY[i];
+    const [xj, yj] = ISLAND_POLY[j];
+    if (yi > lat !== yj > lat && lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
 // Haversine distance in meters — used by the track displacement gate (§11).
 export function distanceMeters(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371000;

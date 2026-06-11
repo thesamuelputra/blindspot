@@ -40,6 +40,7 @@ crons.interval('ioda', { seconds: 907 }, internal.feeds.ioda.sync, {});
 crons.interval('social-pulse', { seconds: 947 }, internal.feeds.socialPulse.sync, {});
 crons.interval('gdelt', { seconds: 953 }, internal.feeds.gdelt.sync, {});
 crons.interval('bchydro-outages', { seconds: 300 }, internal.feeds.bchydroOutages.sync, {});
+crons.interval('aisstream-watchdog', { seconds: 317 }, internal.feeds.aisVessels.watchdog, {});
 crons.interval('drivebc-open511', { seconds: 307 }, internal.feeds.drivebcEvents.sync, {});
 crons.interval('bcws-fires', { seconds: 900 }, internal.feeds.bcwsFires.sync, {});
 crons.interval('bc-evac-orders', { seconds: 911 }, internal.feeds.bcEvacOrders.sync, {});

@@ -149,8 +149,10 @@ export function MapView({ page }: { page: string }) {
       (s.severity === 'critical' || s.severity === 'warning') &&
       Date.now() - s._creationTime < 15 * 60_000,
   );
-  const pulseClock = useNow(pulses.length > 0 && timeMode === 'live' ? 250 : 60_000);
-  if (pulses.length > 0 && timeMode === 'live') {
+  const reducedMotion =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const pulseClock = useNow(pulses.length > 0 && timeMode === 'live' && !reducedMotion ? 250 : 60_000);
+  if (pulses.length > 0 && timeMode === 'live' && !reducedMotion) {
     const phase = (pulseClock % 2000) / 2000;
     deckLayers.push(
       new ScatterplotLayer({

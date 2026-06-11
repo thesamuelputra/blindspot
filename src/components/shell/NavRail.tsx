@@ -30,6 +30,7 @@ export function NavRail() {
         overflowY: 'auto',
       }}
     >
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
       {PAGES.map((p) => (
         <Link
           key={p.to}
@@ -56,6 +57,17 @@ export function NavRail() {
           {p.label}
         </Link>
       ))}
+      <div style={{ flex: 1 }} />
+      <div
+        className="microlabel"
+        style={{ padding: '10px 8px', fontSize: 8, lineHeight: 1.6, color: 'var(--text-3)' }}
+        title="Aggregated public OSINT. Informational only. Not for life safety decisions."
+      >
+        PUBLIC OSINT
+        <br />
+        NOT FOR LIFE SAFETY
+      </div>
+      </div>
     </nav>
   );
 }

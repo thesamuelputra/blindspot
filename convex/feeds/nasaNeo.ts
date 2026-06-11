@@ -108,8 +108,9 @@ export const sync = internalAction({
           observedAt: fetchedAt,
           startsAt: approachAt,
           expiresAt: approachAt + DAY_MS,
-          // id alone recurs across approach windows — date-qualify it.
-          dedupeKey: `${META.slug}:${neo.id}:${utcDate(approachAt)}`,
+          // AUDIT (Phase 6): one row per NEO — the upsert refreshes it with
+          // the next approach window instead of stacking date-suffixed copies
+          dedupeKey: `${META.slug}:${neo.id}`,
           confidence: 1.0, // agency tier: NASA/JPL orbit solutions
           provenance: JSON.stringify({
             method: 'poll',

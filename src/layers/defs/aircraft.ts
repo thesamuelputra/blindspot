@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useQuery } from 'convex/react';
 import { IconLayer } from '@deck.gl/layers';
 import { api } from '../../../convex/_generated/api';
@@ -16,14 +17,21 @@ export interface SnapshotMover {
   a?: number; // altitude
 }
 
+const EMPTY: SnapshotMover[] = [];
+
 export function useSnapshot(key: string): { data: SnapshotMover[]; updatedAt?: number } {
   const row = useQuery(api.snapshots.get, { key });
-  if (!row) return { data: [] };
-  try {
-    return { data: JSON.parse(row.json) as SnapshotMover[], updatedAt: row.updatedAt };
-  } catch {
-    return { data: [] };
-  }
+  // memoized on row identity — a referentially fresh array per render caused
+  // an infinite effect cascade downstream (AUDIT finding, Phase 6)
+  const data = useMemo(() => {
+    if (!row) return EMPTY;
+    try {
+      return JSON.parse(row.json) as SnapshotMover[];
+    } catch {
+      return EMPTY;
+    }
+  }, [row]);
+  return { data, updatedAt: row?.updatedAt };
 }
 
 export const aircraftLayer: LayerDef<SnapshotMover> = {

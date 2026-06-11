@@ -205,7 +205,9 @@ function toSignals(
       severity: 'info',
       observedAt,
       expiresAt: observedAt + WEEK_MS,
-      dedupeKey: `news:${djb2hex(link)}`,
+      // AUDIT (Phase 6): syndicated copies (Black Press) share headlines under
+      // different links — dedupe on the normalized title so one story = one row
+      dedupeKey: `news:${djb2hex(title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim())}`,
       confidence: 0.4,
       provenance: JSON.stringify({ method: 'poll', fetchedAt: opts.fetchedAt, url: opts.feedUrl }),
       raw: JSON.stringify({ link, outlet: opts.outletId }).slice(0, 2048),

@@ -4,6 +4,9 @@ import { useSnapshot, type SnapshotMover } from '@/layers/defs/aircraft';
 // Dead-reckons mover positions between fixes so the board feels live
 // (ARCHITECTURE §10 interaction contract). Presentation only — the inspector
 // shows true fix age. Extrapolation caps at 5 min, then markers freeze.
+// AUDIT (Phase 6): raw lives in a ref and the projector runs on a fixed
+// interval keyed to snapshot identity — never per-render — after the
+// original implementation caused an infinite update cascade.
 const TICK_MS = 1000;
 const MAX_EXTRAPOLATE_MS = 5 * 60_000;
 const KT_TO_MPS = 0.514444;
@@ -21,11 +24,15 @@ export function useAnimatedSnapshot(key: string): {
   updatedAt?: number;
 } {
   const { data: raw, updatedAt } = useSnapshot(key);
-  // remember when each mover's fix last CHANGED (snapshot updatedAt is batch-level)
+  const rawRef = useRef<SnapshotMover[]>(raw);
+  // when each mover's fix last CHANGED (snapshot updatedAt is batch-level)
   const fixesRef = useRef<Map<string, { lat: number; lng: number; at: number }>>(new Map());
   const [animated, setAnimated] = useState<AnimatedMover[]>([]);
 
+  // fold new snapshot data into the refs (runs only when the memoized
+  // snapshot array actually changes identity, i.e. on real updates)
   useEffect(() => {
+    rawRef.current = raw;
     const now = Date.now();
     const fixes = fixesRef.current;
     const seen = new Set<string>();
@@ -39,13 +46,12 @@ export function useAnimatedSnapshot(key: string): {
     for (const id of fixes.keys()) if (!seen.has(id)) fixes.delete(id);
   }, [raw]);
 
+  // fixed-interval projector reading refs — independent of render cycles
   useEffect(() => {
-    let mounted = true;
     const project = () => {
-      if (!mounted) return;
       const now = Date.now();
       setAnimated(
-        raw.map((m) => {
+        rawRef.current.map((m) => {
           const fix = fixesRef.current.get(m.id) ?? { lat: m.lat, lng: m.lng, at: now };
           const dt = Math.min(now - fix.at, MAX_EXTRAPOLATE_MS);
           const speedKt = m.s ?? 0;
@@ -53,7 +59,7 @@ export function useAnimatedSnapshot(key: string): {
           if (speedKt < 1 || heading === undefined || dt <= 0) {
             return { ...m, fixLat: fix.lat, fixLng: fix.lng, fixAt: fix.at, extrapolated: false };
           }
-          const dist = speedKt * KT_TO_MPS * (dt / 1000); // meters along heading
+          const dist = speedKt * KT_TO_MPS * (dt / 1000);
           const rad = (heading * Math.PI) / 180;
           const dLat = (dist * Math.cos(rad)) / EARTH_M_PER_DEG_LAT;
           const dLng =
@@ -73,11 +79,8 @@ export function useAnimatedSnapshot(key: string): {
     };
     project();
     const id = setInterval(project, TICK_MS);
-    return () => {
-      mounted = false;
-      clearInterval(id);
-    };
-  }, [raw]);
+    return () => clearInterval(id);
+  }, []);
 
   return { data: animated, updatedAt };
 }

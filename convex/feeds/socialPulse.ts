@@ -219,7 +219,9 @@ export const sync = internalAction({
     let blueskyError: string | undefined;
     try {
       const res = await fetchSource(BSKY_URL);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      // AUDIT (Phase 6): surface the XRPC error body — bare 400s carried no
+      // diagnostics (datacenter-IP block of unauthenticated search suspected)
+      if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
       const data = (await res.json()) as { posts?: BskyPost[] };
       blueskyCount = 0;
       for (const post of (data.posts ?? []).slice(0, CAP)) {
