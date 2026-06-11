@@ -27,3 +27,4 @@ build/
 # tooling artifacts
 .playwright-mcp/
 *.tsbuildinfo
+.vercel

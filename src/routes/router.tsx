@@ -10,7 +10,7 @@ import { TopBar } from '@/components/shell/TopBar';
 import { NavRail } from '@/components/shell/NavRail';
 import { PagePlaceholder } from '@/components/shell/PagePlaceholder';
 import { LoginGate } from '@/components/auth/LoginGate';
-import { MapShell } from '@/map/MapShell';
+import { MapView } from '@/map/MapView';
 
 function Shell() {
   return (
@@ -53,7 +53,7 @@ const indexRoute = createRoute({
 const commandRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/command',
-  component: MapShell,
+  component: () => <MapView page="command" />,
 });
 
 const placeholder = (path: string, code: string, note?: string) =>
