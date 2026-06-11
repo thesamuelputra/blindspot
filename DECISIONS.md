@@ -67,13 +67,17 @@
 
 ## D8. Convex budget + cadence plan
 
-Free tier verified: **1M function calls/mo, 20 GB-h action compute, 0.5 GB DB storage, 1 GB DB bandwidth.** 1M calls/mo ≈ 22 calls/min sustained; a cron tick ≈ ~3 calls (action + runQuery + runMutation).
+Free tier verified: **1M function calls/mo, 20 GB-h action compute, 0.5 GB DB storage, 1 GB DB bandwidth.** A simple feed tick ≈ ~3 calls (action + runQuery + runMutation); the brain tick is batched to ~4–6 calls (one context query, one commit mutation — see ARCHITECTURE §5/§11). All four budget dimensions are modeled — calls, storage, **bandwidth**, compute:
 
-- **Fast (60–120s):** quakes, aircraft, weather-alert check, NAAD check, geofence/anomaly eval. ~6 fast jobs ≈ 400–700K calls/mo — the dominant budget line; tune intervals before adding fast jobs.
+- **Fast lane (90–120s, standardized):** quakes, aircraft, weather-alert check, NAAD check. ~5 fast feed jobs ≈ 350–550K calls/mo — the dominant line; tune intervals before adding fast jobs.
+- **Brain tick:** single 120s cron (fusion + geofence + anomaly; threat every 8th tick) ≈ 130–190K calls/mo.
+- **AIS worker ingest:** 30s batches (aligned with position thinning) ≈ 90–170K calls/mo — this line was invisible in the first draft and is now budgeted.
 - **Medium (5–15 min):** radar timestamp, conditions, AQHI, wildfire, transit GTFS-RT, outages, ferries, buoys, news RSS, GDELT.
-- **Slow (30–60 min / daily):** tides predictions, TLEs (daily — CelesTrak etiquette), drought, snow, permits, events, INTSUM (4 h).
-- **Storage is the real ceiling** (0.5 GB): retention crons are first-class — `tracks` ~48 h (replay window), `readings` 7 d (downsample after 24 h), `notifications` 30 d, `signals` per-kind TTL. AIS positions are the biggest writer; the worker thins to one position per vessel per ~30 s before writing.
-- If the budget pinches, the upgrade is Convex Pro ($25/mo) — but the cadence plan above fits free with headroom.
+- **Slow (30–60 min / daily):** tides predictions, TLEs (daily — CelesTrak etiquette), drought, snow, permits, events, INTSUM (4 h), pattern-of-life (daily).
+- **Reactive re-runs bill too:** an always-on WALL client re-executes subscribed queries on every relevant write. Mover layers therefore subscribe to throttled `snapshots` docs (≥30s apart, ~20KB), never raw entity scans — this bounds both calls and bandwidth.
+- **Storage (0.5 GB) is the hard ceiling:** retention is a self-rescheduling batch loop (hourly single-batch can't keep up with mover inflow); `tracks` 48 h, `readings` downsampled then 7 d, `entities` stale 7 d, `notifications` 30 d, `signals` per-kind TTL. AIS thins to one position per vessel per 30 s + displacement gating before writing.
+- **Bandwidth (1 GB/mo):** counters maintained incrementally in `snapshots` by ingest mutations — never per-tick table scans; `raw` ≤ 2KB; polygons simplified before write.
+- **Total estimate ≈ 1–1.3M calls/mo** → free tier ± ~$1 of overage. **Flag for Samuel:** staying strictly free-tier (no card) means a bandwidth overrun can stop mutations; enabling pay-as-you-go (≈$1–3/mo realistic) removes that cliff. Same decision moment as the D2 worker hosting (~$2/mo) — both at deploy time.
 
 ## D9. Excluded sources (licensing guardrails — do not revisit casually)
 
@@ -83,6 +87,11 @@ Free tier verified: **1M function calls/mo, 20 GB-h action compute, 0.5 GB DB st
 | LiveATC | ToS flatly prohibits using streams in third-party apps — no in-platform embed. SIGNALS page links out as explicit secondary action only |
 | Broadcastify | Embedding requires their paid API/player; BC public-safety radio is mostly encrypted anyway. Same link-out-only treatment |
 | VicPD crime map | Rebuilt on Motorola CityProtect (vendor iframe, ToS-restricted). Crime coverage = aggregate open-data releases + news, honestly thin, per brief |
+| Windy Webcams | **Deferred, not excluded:** free-tier image URLs expire ~10 min and require just-in-time re-minting via the keyed API — needs a JIT-mint query the cameras schema doesn't carry yet. Revisit only if DriveBC + institutional + YouTube cams leave real gaps |
+
+## D12. Aircraft feed strategy (amended after ToS review)
+
+**Decision:** the live-aircraft backbone is the **community aggregator trio — adsb.fi + adsb.lol + airplanes.live — behind one readsb-shape adapter with failover** (all three verified live, keyless, same response family; per-source rate limits in SOURCES.md). **OpenSky is demoted to an optional supplement:** recon found its 2026 ToS requires a prior written agreement for automated/operational use even non-commercially. We don't build on a feed we'd be violating; if Samuel wants OpenSky's research-grade data later, the path is asking them for the agreement, then enabling the already-specced OAuth2 module (token cache in `apiTokens`).
 
 ## D10. Repo + deploy shape
 
