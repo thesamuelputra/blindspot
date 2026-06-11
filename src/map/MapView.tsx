@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import { useQuery } from 'convex/react';
 import type { Layer, PickingInfo } from '@deck.gl/core';
-import { PathLayer } from '@deck.gl/layers';
+import { PathLayer, ScatterplotLayer } from '@deck.gl/layers';
+import { useNow } from '@/lib/time';
 import { api } from '../../convex/_generated/api';
 import { LAYER_REGISTRY } from '@/layers/registry';
 import { LayerRail } from '@/layers/LayerRail';
@@ -137,6 +138,37 @@ export function MapView({ page }: { page: string }) {
         { tracks: replayTracks ?? [], signals: replaySignals ?? [], fromMs: replayWin.fromMs },
         playhead,
       ),
+    );
+  }
+
+  // expanding-ring pulse on fresh warning/critical signals (BRIEF §12)
+  const recentForPulse = useQuery(api.signals.recent, { limit: 30 }) ?? [];
+  const pulses = recentForPulse.filter(
+    (s) =>
+      s.lat != null &&
+      (s.severity === 'critical' || s.severity === 'warning') &&
+      Date.now() - s._creationTime < 15 * 60_000,
+  );
+  const pulseClock = useNow(pulses.length > 0 && timeMode === 'live' ? 250 : 60_000);
+  if (pulses.length > 0 && timeMode === 'live') {
+    const phase = (pulseClock % 2000) / 2000;
+    deckLayers.push(
+      new ScatterplotLayer({
+        id: 'pulse-rings',
+        data: pulses,
+        getPosition: (d: { lng?: number; lat?: number }) => [d.lng!, d.lat!],
+        stroked: true,
+        filled: false,
+        getRadius: 2000 + phase * 14_000,
+        radiusUnits: 'meters',
+        radiusMinPixels: 6,
+        getLineColor: (d: { severity: string }) =>
+          d.severity === 'critical'
+            ? [239, 68, 68, Math.round(200 * (1 - phase))]
+            : [245, 158, 11, Math.round(170 * (1 - phase))],
+        lineWidthMinPixels: 1.5,
+        updateTriggers: { getRadius: phase, getLineColor: phase },
+      }),
     );
   }
 

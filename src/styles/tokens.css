@@ -95,6 +95,29 @@ body {
   border-radius: 50%;
 }
 
+/* faint scanlines on chrome panels (BRIEF §12) — texture, not decoration */
+.scanlines {
+  position: relative;
+}
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2px,
+    rgba(255, 255, 255, 0.012) 2px,
+    rgba(255, 255, 255, 0.012) 3px
+  );
+}
+
+:focus-visible {
+  outline: 1px solid var(--accent-live);
+  outline-offset: 1px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

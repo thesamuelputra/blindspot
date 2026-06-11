@@ -1,3 +1,4 @@
+import { motion } from 'motion/react';
 import { useNow } from '@/lib/time';
 import { LiveMedia } from '@/components/media/LiveMedia';
 import { AddToIncident } from '@/components/incidents/AddToIncident';
@@ -33,7 +34,11 @@ export function Inspector({
   onClose: () => void;
 }) {
   return (
-    <aside
+    <motion.aside
+      initial={{ x: 24, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+      className="scanlines"
       style={{
         position: 'absolute',
         top: 12,
@@ -82,7 +87,7 @@ export function Inspector({
         {target.type === 'camera' && <CameraPanel target={target} />}
         {target.type === 'signal' && <SignalPanel data={target.data} />}
       </div>
-    </aside>
+    </motion.aside>
   );
 }
 

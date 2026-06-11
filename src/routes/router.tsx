@@ -26,6 +26,7 @@ import { PulsePage } from '@/pages/PulsePage';
 import { EnviroPage } from '@/pages/EnviroPage';
 import { SpacePage } from '@/pages/SpacePage';
 import { AlertToasts } from '@/components/alerts/AlertToasts';
+import { BootSequence } from '@/components/shell/BootSequence';
 
 function Shell() {
   return (
@@ -52,6 +53,7 @@ function Shell() {
         </div>
         <CommandPalette />
         <AlertToasts />
+        <BootSequence />
       </Authenticated>
     </>
   );

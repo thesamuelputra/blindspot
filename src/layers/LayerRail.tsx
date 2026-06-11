@@ -62,6 +62,7 @@ export function LayerRail({
   if (defs.length === 0) return null;
   return (
     <div
+      className="scanlines"
       style={{
         position: 'absolute',
         top: 12,
