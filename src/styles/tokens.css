@@ -1,0 +1,106 @@
+/* BlindSpot design tokens — BRIEF §12. Color carries meaning, not decoration. */
+:root {
+  /* surfaces (elevation tiers) */
+  --bg-0: #0a0c10; /* app background */
+  --bg-1: #0d1117;
+  --bg-2: #14181f;
+  --bg-3: #1b2129; /* panels / cards */
+  --border-hairline: rgba(255, 255, 255, 0.07);
+  --border-hairline-strong: rgba(255, 255, 255, 0.1);
+
+  /* text */
+  --text-1: #e6eaf0;
+  --text-2: #9aa4b2;
+  --text-3: #5b6573;
+
+  /* semantic accents — an accent means something */
+  --accent-live: #38bdf8;
+  --accent-live-2: #3b82f6;
+  --ok: #34d399;
+  --warn: #f59e0b;
+  --critical: #ef4444;
+  --intel: #a78bfa;
+
+  /* type */
+  --font-ui: 'Inter Variable', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', monospace;
+
+  /* rhythm */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s6: 24px;
+  --s8: 32px;
+
+  /* motion — purposeful, fast, mechanical */
+  --ease-ops: cubic-bezier(0.2, 0.9, 0.25, 1);
+  --t-fast: 180ms;
+  --t-med: 240ms;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg-0);
+  color: var(--text-1);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* data readouts are always mono, tabular, small */
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+}
+
+/* UPPERCASE micro-labels with letter-spacing */
+.microlabel {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border: 1px solid var(--border-hairline);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.pill .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

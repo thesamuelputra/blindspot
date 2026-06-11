@@ -23,3 +23,7 @@ build/
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# tooling artifacts
+.playwright-mcp/
+*.tsbuildinfo
