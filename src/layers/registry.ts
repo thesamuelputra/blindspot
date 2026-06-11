@@ -18,6 +18,10 @@ import { riversLayer } from './defs/rivers';
 import { camsLayer } from './defs/cams';
 import { sondesLayer } from './defs/sondes';
 import { vesselsLayer } from './defs/vessels';
+import { marineNoticesLayer } from './defs/marineNotices';
+import { closuresLayer } from './defs/closures';
+import { evChargersLayer } from './defs/evChargers';
+import { pm25Layer } from './defs/pm25';
 import { gpsjamLayer } from './defs/gpsjam';
 import { gibsTruecolorLayer } from './defs/gibsRasters';
 
@@ -33,12 +37,16 @@ export const LAYER_REGISTRY: LayerDef[] = [
   gpsjamLayer as LayerDef,
   alertsLayer as LayerDef,
   firesLayer as LayerDef,
+  closuresLayer as LayerDef,
   tremorLayer as LayerDef,
   hotspotsLayer as LayerDef,
   quakesLayer as LayerDef,
   outagesLayer as LayerDef,
   roadEventsLayer as LayerDef,
   aqhiLayer as LayerDef,
+  pm25Layer as LayerDef,
+  marineNoticesLayer as LayerDef,
+  evChargersLayer as LayerDef,
   buoysLayer as LayerDef,
   tideStationsLayer as LayerDef,
   riversLayer as LayerDef,
