@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
 import { useQuery } from 'convex/react';
 import type { Layer, PickingInfo } from '@deck.gl/core';
-import { PathLayer, ScatterplotLayer } from '@deck.gl/layers';
+import { ScatterplotLayer } from '@deck.gl/layers';
 import { useNow } from '@/lib/time';
+import { buildHistoryTrail, buildFutureTrail } from './trailLayers';
 import { api } from '../../convex/_generated/api';
 import { LAYER_REGISTRY } from '@/layers/registry';
 import { LayerRail } from '@/layers/LayerRail';
@@ -46,37 +47,27 @@ const REPLAY_KINDS = ['aircraft', 'vessel', 'ferry', 'bus', 'balloon'];
 const TRAIL_HOVER_MS = 2 * 3600_000;
 const TRAIL_INSPECT_MS = 12 * 3600_000;
 
+type TrailPayload = {
+  points: Array<{ lat: number; lng: number; at: number }>;
+  entity: { lat: number; lng: number; heading?: number; speed?: number; stale: boolean };
+} | null;
+
+// Smooth solid history + (for the inspected mover) dashed dead-reckoned future
+// (src/map/trailLayers.ts — Samuel's contract: smooth, solid past, dashed future).
 function trailToLayers(
   id: string,
-  trail: { points: Array<{ lat: number; lng: number }> } | null | undefined,
+  trail: TrailPayload | undefined,
   color: [number, number, number],
+  futureKind?: string,
 ): Layer[] {
-  if (!trail || trail.points.length < 2) return [];
-  // segment-wise alpha ramp: oldest faint, newest solid — the path reads as motion
-  const segs = [];
-  for (let i = 1; i < trail.points.length; i++) {
-    const a = trail.points[i - 1];
-    const b = trail.points[i];
-    segs.push({
-      path: [
-        [a.lng, a.lat],
-        [b.lng, b.lat],
-      ] as [number, number][],
-      alpha: 40 + Math.round(180 * (i / trail.points.length)),
-    });
+  if (!trail) return [];
+  // anchor the curve to the entity's latest fix so the trail meets the marker
+  const points = [...trail.points, { lat: trail.entity.lat, lng: trail.entity.lng, at: 0 }];
+  const layers = buildHistoryTrail(id, points, color);
+  if (futureKind && !trail.entity.stale) {
+    layers.push(...buildFutureTrail(`${id}-future`, futureKind, trail.entity, color));
   }
-  return [
-    new PathLayer<{ path: [number, number][]; alpha: number }>({
-      id,
-      data: segs,
-      getPath: (d) => d.path,
-      getColor: (d) => [color[0], color[1], color[2], d.alpha],
-      getWidth: 1.5,
-      widthUnits: 'pixels',
-      capRounded: true,
-      jointRounded: true,
-    }),
-  ];
+  return layers;
 }
 
 // Assembles registry data for one page and feeds MapShell + the rail.
@@ -138,7 +129,9 @@ export function MapView({ page }: { page: string }) {
       : 'skip',
   );
   deckLayers.push(...trailToLayers('trail-hover', hoverTrail, [56, 189, 248]));
-  deckLayers.push(...trailToLayers('trail-inspect', inspectTrail, [167, 139, 250]));
+  deckLayers.push(
+    ...trailToLayers('trail-inspect', inspectTrail, [167, 139, 250], inspectedMover?.kind),
+  );
 
   if (replayWin) {
     deckLayers.push(

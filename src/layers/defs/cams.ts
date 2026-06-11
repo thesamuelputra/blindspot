@@ -1,15 +1,16 @@
 import { useQuery } from 'convex/react';
-import { ScatterplotLayer } from '@deck.gl/layers';
+import { IconLayer } from '@deck.gl/layers';
 import { api } from '../../../convex/_generated/api';
 import type { Doc } from '../../../convex/_generated/dataModel';
 import type { LayerDef } from '../types';
 
-// DriveBC highway webcams — small neutral dots straight from cameras.list
-// (inventory changes rarely; no snapshot hop needed). Image popovers land in
-// Phase 5; for now the dots just mark where eyes exist.
+// Camera markers wear a camera glyph (Samuel's marker-identity contract).
+// Straight from cameras.list — the inventory changes rarely, no snapshot hop.
+// Audio nodes (hydrophones) render violet; visual cams neutral grey.
 type Camera = Doc<'cameras'>;
 
-const DOT: [number, number, number, number] = [230, 234, 240, 150];
+const CAM_GREY: [number, number, number, number] = [170, 180, 196, 215];
+const AUDIO_VIOLET: [number, number, number, number] = [167, 139, 250, 225];
 
 export const camsLayer: LayerDef<Camera> = {
   id: 'cams',
@@ -23,13 +24,17 @@ export const camsLayer: LayerDef<Camera> = {
   },
   toLayers(data) {
     return [
-      new ScatterplotLayer<Camera>({
+      new IconLayer<Camera>({
         id: 'cams',
         data,
+        iconAtlas: '/icons/camera.png',
+        iconMapping: { cam: { x: 0, y: 0, width: 64, height: 64, mask: true } },
+        getIcon: () => 'cam',
         getPosition: (d) => [d.lng, d.lat],
-        getFillColor: DOT,
-        radiusMinPixels: 2.5,
-        radiusMaxPixels: 5,
+        getColor: (d) => (d.kind === 'audio' ? AUDIO_VIOLET : CAM_GREY),
+        getSize: 15,
+        sizeUnits: 'pixels',
+        sizeMinPixels: 11,
         pickable: true,
       }),
     ];
