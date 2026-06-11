@@ -12,6 +12,8 @@ import { PagePlaceholder } from '@/components/shell/PagePlaceholder';
 import { LoginGate } from '@/components/auth/LoginGate';
 import { CommandPalette } from '@/components/shell/CommandPalette';
 import { CommandPage } from '@/pages/CommandPage';
+import { WorldPage } from '@/pages/WorldPage';
+import { WallPage } from '@/pages/WallPage';
 
 function Shell() {
   return (
@@ -78,10 +80,10 @@ const routeTree = rootRoute.addChildren([
   placeholder('/space', 'SPACE // SATS · LAUNCHES · AURORA'),
   placeholder('/analyst', 'ANALYST // NL CONSOLE + INTSUM', 'BRAIN ARRIVES IN PHASE 4'),
   placeholder('/incidents', 'INCIDENTS // WORKSPACE', 'BRAIN ARRIVES IN PHASE 4'),
-  placeholder('/world', 'WORLD // GLOBAL THREAT BOARD'),
+  createRoute({ getParentRoute: () => rootRoute, path: '/world', component: WorldPage }),
   placeholder('/cams', 'CAMS // LIVE MEDIA WALL'),
   placeholder('/system', 'SYSTEM // FEED HEALTH + OPS BOARD'),
-  placeholder('/wall', 'WALL // KIOSK BIG-BOARD', 'ROTATION ARRIVES IN PHASE 5'),
+  createRoute({ getParentRoute: () => rootRoute, path: '/wall', component: WallPage }),
 ]);
 
 export const router = createRouter({ routeTree });
