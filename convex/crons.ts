@@ -12,9 +12,20 @@ crons.interval('eccc-weather-alerts', { seconds: 113 }, internal.feeds.ecccAlert
 crons.interval('ntwc-tsunami', { seconds: 119 }, internal.feeds.ntwcTsunami.sync, {});
 crons.interval('naad-pelmorex', { seconds: 107 }, internal.feeds.naadPelmorex.sync, {});
 crons.interval('adsb-aircraft', { seconds: 127 }, internal.feeds.adsbAircraft.sync, {});
+crons.interval('bc-transit', { seconds: 131 }, internal.feeds.bcTransit.sync, {});
 
 // ---- medium lane ----
 crons.interval('nrcan-quakes', { seconds: 240 }, internal.feeds.nrcanQuakes.sync, {});
+crons.interval('bc-ferries', { seconds: 293 }, internal.feeds.bcFerries.sync, {});
+crons.interval('noaa-swpc', { seconds: 311 }, internal.feeds.noaaSwpc.sync, {});
+crons.interval('dfo-tides', { seconds: 601 }, internal.feeds.dfoTides.sync, {});
+crons.interval('uvic-mesh', { seconds: 607 }, internal.feeds.uvicMesh.sync, {});
+crons.interval('onc-oceans', { seconds: 613 }, internal.feeds.oncOceans.sync, {});
+crons.interval('eccc-aqhi', { seconds: 901 }, internal.feeds.ecccAqhi.sync, {});
+crons.interval('ndbc-buoys', { seconds: 907 }, internal.feeds.ndbcBuoys.sync, {});
+crons.interval('eccc-hydrometric', { seconds: 919 }, internal.feeds.ecccHydrometric.sync, {});
+crons.interval('eccc-conditions', { seconds: 929 }, internal.feeds.ecccConditions.sync, {});
+crons.interval('open-meteo', { seconds: 937 }, internal.feeds.openMeteo.sync, {});
 crons.interval('bchydro-outages', { seconds: 300 }, internal.feeds.bchydroOutages.sync, {});
 crons.interval('drivebc-open511', { seconds: 307 }, internal.feeds.drivebcEvents.sync, {});
 crons.interval('bcws-fires', { seconds: 900 }, internal.feeds.bcwsFires.sync, {});
@@ -24,5 +35,6 @@ crons.interval('bc-evac-orders', { seconds: 911 }, internal.feeds.bcEvacOrders.s
 crons.interval('pnsn-tremor', { seconds: 1801 }, internal.feeds.pnsnTremor.sync, {});
 crons.interval('cwfis-hotspots', { seconds: 1811 }, internal.feeds.cwfisHotspots.sync, {});
 crons.interval('nasa-firms', { seconds: 1831 }, internal.feeds.nasaFirms.sync, {});
+crons.interval('drivebc-cams', { seconds: 3607 }, internal.feeds.drivebcCams.sync, {});
 
 export default crons;
