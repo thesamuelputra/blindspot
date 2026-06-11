@@ -11,6 +11,11 @@
 import type * as admin from "../admin.js";
 import type * as alerts from "../alerts.js";
 import type * as auth from "../auth.js";
+import type * as brain_alerting from "../brain/alerting.js";
+import type * as brain_evaluate from "../brain/evaluate.js";
+import type * as brain_rules_index from "../brain/rules/index.js";
+import type * as brain_rules_squawkEmergency from "../brain/rules/squawkEmergency.js";
+import type * as brain_types from "../brain/types.js";
 import type * as cameras from "../cameras.js";
 import type * as crons from "../crons.js";
 import type * as feeds_abusech from "../feeds/abusech.js";
@@ -94,6 +99,11 @@ declare const fullApi: ApiFromModules<{
   admin: typeof admin;
   alerts: typeof alerts;
   auth: typeof auth;
+  "brain/alerting": typeof brain_alerting;
+  "brain/evaluate": typeof brain_evaluate;
+  "brain/rules/index": typeof brain_rules_index;
+  "brain/rules/squawkEmergency": typeof brain_rules_squawkEmergency;
+  "brain/types": typeof brain_types;
   cameras: typeof cameras;
   crons: typeof crons;
   "feeds/abusech": typeof feeds_abusech;

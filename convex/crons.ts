@@ -6,6 +6,9 @@ import { internal } from './_generated/api';
 // staggered (121s, 127s…) so lanes don't tick in synchronized bursts.
 const crons = cronJobs();
 
+// ---- the brain (single batched tick — ARCHITECTURE §5/§7, D8) ----
+crons.interval('brain-tick', { seconds: 120 }, internal.brain.evaluate.evaluate, {});
+
 // ---- fast lane (90–120s, D8: alert-grade feeds only) ----
 crons.interval('usgs-quakes', { seconds: 121 }, internal.feeds.usgsQuakes.sync, {});
 crons.interval('eccc-weather-alerts', { seconds: 113 }, internal.feeds.ecccAlerts.sync, {});
