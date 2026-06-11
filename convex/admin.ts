@@ -1,3 +1,4 @@
+import { v } from 'convex/values';
 import { internalMutation, internalQuery } from './_generated/server';
 
 // Dev/RUNBOOK utility: npx convex run admin:healthSummary
@@ -12,6 +13,34 @@ export const healthSummary = internalQuery({
         .sort(),
       snapshots: snapshots.map((s) => `${s.key}: ${s.json.length}B`).sort(),
     };
+  },
+});
+
+// Dev/RUNBOOK utility: npx convex run admin:deleteEntity '{"kind":"vessel","extId":"316000000"}'
+// Removes a single entity + its tracks + rewrites the positions snapshot (e.g. test data).
+export const deleteEntity = internalMutation({
+  args: { kind: v.string(), extId: v.string() },
+  handler: async (ctx, { kind, extId }) => {
+    const entity = await ctx.db
+      .query('entities')
+      .withIndex('by_ext', (q) => q.eq('kind', kind).eq('extId', extId))
+      .unique();
+    if (!entity) return 'not found';
+    const tracks = await ctx.db
+      .query('tracks')
+      .withIndex('by_entity_at', (q) => q.eq('entityId', entity._id))
+      .collect();
+    for (const t of tracks) await ctx.db.delete(t._id);
+    await ctx.db.delete(entity._id);
+    const snap = await ctx.db
+      .query('snapshots')
+      .withIndex('by_key', (q) => q.eq('key', `positions:${kind}`))
+      .unique();
+    if (snap) {
+      const list = (JSON.parse(snap.json) as Array<{ id: string }>).filter((m) => m.id !== extId);
+      await ctx.db.patch(snap._id, { json: JSON.stringify(list), updatedAt: Date.now() });
+    }
+    return `deleted ${kind}:${extId} (+${tracks.length} tracks)`;
   },
 });
 

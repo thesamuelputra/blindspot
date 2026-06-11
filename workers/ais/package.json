@@ -1,0 +1,13 @@
+{
+  "name": "blindspot-ais-worker",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/index.mjs",
+  "scripts": {
+    "start": "node src/index.mjs"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

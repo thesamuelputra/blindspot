@@ -17,6 +17,7 @@ import { aqhiLayer } from './defs/aqhi';
 import { riversLayer } from './defs/rivers';
 import { camsLayer } from './defs/cams';
 import { sondesLayer } from './defs/sondes';
+import { vesselsLayer } from './defs/vessels';
 import { gpsjamLayer } from './defs/gpsjam';
 import { gibsTruecolorLayer } from './defs/gibsRasters';
 
@@ -45,6 +46,7 @@ export const LAYER_REGISTRY: LayerDef[] = [
   camsLayer as LayerDef,
   transitLayer as LayerDef,
   ferriesLayer as LayerDef,
+  vesselsLayer as LayerDef,
   sondesLayer as LayerDef,
   aircraftLayer as LayerDef,
 ];

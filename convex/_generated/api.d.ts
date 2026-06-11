@@ -14,6 +14,7 @@ import type * as auth from "../auth.js";
 import type * as cameras from "../cameras.js";
 import type * as crons from "../crons.js";
 import type * as feeds_adsbAircraft from "../feeds/adsbAircraft.js";
+import type * as feeds_aisVessels from "../feeds/aisVessels.js";
 import type * as feeds_avalancheCanada from "../feeds/avalancheCanada.js";
 import type * as feeds_bcDrought from "../feeds/bcDrought.js";
 import type * as feeds_bcEvacOrders from "../feeds/bcEvacOrders.js";
@@ -79,6 +80,7 @@ declare const fullApi: ApiFromModules<{
   cameras: typeof cameras;
   crons: typeof crons;
   "feeds/adsbAircraft": typeof feeds_adsbAircraft;
+  "feeds/aisVessels": typeof feeds_aisVessels;
   "feeds/avalancheCanada": typeof feeds_avalancheCanada;
   "feeds/bcDrought": typeof feeds_bcDrought;
   "feeds/bcEvacOrders": typeof feeds_bcEvacOrders;

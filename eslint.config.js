@@ -13,8 +13,19 @@ export default tseslint.config(
     },
   },
   {
-    // node scripts (build-time tooling)
-    files: ['scripts/**/*.mjs'],
-    languageOptions: { globals: { URL: 'readonly', fetch: 'readonly', console: 'readonly' } },
+    // node scripts + workers (Node runtime, not browser)
+    files: ['scripts/**/*.mjs', 'workers/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        URL: 'readonly',
+        fetch: 'readonly',
+        console: 'readonly',
+        process: 'readonly',
+        setTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearTimeout: 'readonly',
+        clearInterval: 'readonly',
+      },
+    },
   },
 );
