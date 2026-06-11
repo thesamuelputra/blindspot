@@ -16,6 +16,9 @@ import { wxStationsLayer } from './defs/wxStations';
 import { aqhiLayer } from './defs/aqhi';
 import { riversLayer } from './defs/rivers';
 import { camsLayer } from './defs/cams';
+import { sondesLayer } from './defs/sondes';
+import { gpsjamLayer } from './defs/gpsjam';
+import { gibsTruecolorLayer } from './defs/gibsRasters';
 
 // One entry per map layer. Wave agents add defs in src/layers/defs/; the
 // orchestrator merges them here (serialized — ARCHITECTURE §2/§10).
@@ -25,6 +28,8 @@ export const LAYER_REGISTRY: LayerDef[] = [
   radarLayer,
   satelliteLayer,
   lightningLayer,
+  gibsTruecolorLayer,
+  gpsjamLayer as LayerDef,
   alertsLayer as LayerDef,
   firesLayer as LayerDef,
   tremorLayer as LayerDef,
@@ -40,5 +45,6 @@ export const LAYER_REGISTRY: LayerDef[] = [
   camsLayer as LayerDef,
   transitLayer as LayerDef,
   ferriesLayer as LayerDef,
+  sondesLayer as LayerDef,
   aircraftLayer as LayerDef,
 ];

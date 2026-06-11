@@ -26,6 +26,8 @@ crons.interval('ndbc-buoys', { seconds: 907 }, internal.feeds.ndbcBuoys.sync, {}
 crons.interval('eccc-hydrometric', { seconds: 919 }, internal.feeds.ecccHydrometric.sync, {});
 crons.interval('eccc-conditions', { seconds: 929 }, internal.feeds.ecccConditions.sync, {});
 crons.interval('open-meteo', { seconds: 937 }, internal.feeds.openMeteo.sync, {});
+crons.interval('sondehub', { seconds: 599 }, internal.feeds.sondehub.sync, {});
+crons.interval('news-rss', { seconds: 941 }, internal.feeds.newsRss.sync, {});
 crons.interval('bchydro-outages', { seconds: 300 }, internal.feeds.bchydroOutages.sync, {});
 crons.interval('drivebc-open511', { seconds: 307 }, internal.feeds.drivebcEvents.sync, {});
 crons.interval('bcws-fires', { seconds: 900 }, internal.feeds.bcwsFires.sync, {});
@@ -36,5 +38,13 @@ crons.interval('pnsn-tremor', { seconds: 1801 }, internal.feeds.pnsnTremor.sync,
 crons.interval('cwfis-hotspots', { seconds: 1811 }, internal.feeds.cwfisHotspots.sync, {});
 crons.interval('nasa-firms', { seconds: 1831 }, internal.feeds.nasaFirms.sync, {});
 crons.interval('drivebc-cams', { seconds: 3607 }, internal.feeds.drivebcCams.sync, {});
+crons.interval('bc-rfc-advisories', { seconds: 3613 }, internal.feeds.bcRfcAdvisories.sync, {});
+crons.interval('launch-library', { seconds: 3617 }, internal.feeds.launchLibrary.sync, {});
+crons.interval('gpsjam', { seconds: 21601 }, internal.feeds.gpsjam.sync, {});
+crons.interval('sst-erddap', { seconds: 21611 }, internal.feeds.sstErddap.sync, {});
+crons.interval('avalanche-canada', { seconds: 21617 }, internal.feeds.avalancheCanada.sync, {});
+crons.interval('bc-drought', { seconds: 43201 }, internal.feeds.bcDrought.sync, {});
+crons.interval('celestrak', { seconds: 86401 }, internal.feeds.celestrak.sync, {});
+crons.interval('nasa-neo', { seconds: 86411 }, internal.feeds.nasaNeo.sync, {});
 
 export default crons;

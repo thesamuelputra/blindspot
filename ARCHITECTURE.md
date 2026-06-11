@@ -310,7 +310,7 @@ export default defineSchema({
 
 ## 4. Normalized contracts
 
-**SignalKind** (closed enum, extend only here): `earthquake · tremor · tsunami · weather-alert · public-alert · wildfire · hotspot · evac-order · smoke · road-event · outage · transit-alert · marine-notice · closure-fishery · vessel-event · aircraft-event · space-weather · launch · news · civic · event · sighting · anomaly · derived`.
+**SignalKind** (closed enum, extend only here): `earthquake · tremor · tsunami · weather-alert · public-alert · wildfire · hotspot · evac-order · smoke · road-event · outage · transit-alert · marine-notice · closure-fishery · vessel-event · aircraft-event · space-weather · launch · news · civic · event · sighting · anomaly · derived · world-event` (world-event = WORLD-page signals; exempt from the VI bbox filter by definition).
 
 **Severity** maps every upstream scale onto `info | watch | warning | critical`. Mapping is the feed module's job and must be documented in a comment citing the upstream field (e.g. ECCC `alert_type` + `risk_colour_en` → severity).
 
