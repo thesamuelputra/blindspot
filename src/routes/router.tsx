@@ -10,7 +10,8 @@ import { TopBar } from '@/components/shell/TopBar';
 import { NavRail } from '@/components/shell/NavRail';
 import { PagePlaceholder } from '@/components/shell/PagePlaceholder';
 import { LoginGate } from '@/components/auth/LoginGate';
-import { MapView } from '@/map/MapView';
+import { CommandPalette } from '@/components/shell/CommandPalette';
+import { CommandPage } from '@/pages/CommandPage';
 
 function Shell() {
   return (
@@ -35,6 +36,7 @@ function Shell() {
             </main>
           </div>
         </div>
+        <CommandPalette />
       </Authenticated>
     </>
   );
@@ -53,7 +55,7 @@ const indexRoute = createRoute({
 const commandRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/command',
-  component: () => <MapView page="command" />,
+  component: CommandPage,
 });
 
 const placeholder = (path: string, code: string, note?: string) =>

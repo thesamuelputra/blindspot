@@ -1,9 +1,19 @@
+import { useQuery } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
 import { useNow, formatUtc, formatLocal, formatCoord } from '@/lib/time';
 import { useUi } from '@/state/ui';
+
+const THREAT_TONE: Record<string, string> = {
+  NOMINAL: 'var(--ok)',
+  ELEVATED: 'var(--warn)',
+  HIGH: 'var(--critical)',
+};
 
 export function TopBar() {
   const now = useNow(1000);
   const reticle = useUi((s) => s.reticle);
+  const threat = useQuery(api.threat.latest, {});
+  const level = threat?.level ?? 'NOMINAL';
 
   return (
     <header
@@ -34,9 +44,9 @@ export function TopBar() {
         </span>
       )}
 
-      <span className="pill" style={{ color: 'var(--ok)' }}>
-        <span className="dot" style={{ background: 'var(--ok)' }} />
-        SYSTEM NOMINAL
+      <span className="pill" style={{ color: THREAT_TONE[level] }} title={threat ? `score ${threat.score.toFixed(1)}` : undefined}>
+        <span className="dot" style={{ background: THREAT_TONE[level] }} />
+        SYSTEM {level}
       </span>
 
       <span className="mono" style={{ color: 'var(--text-2)' }}>

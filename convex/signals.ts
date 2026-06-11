@@ -4,6 +4,19 @@ import { query } from './_generated/server';
 // Reactive client queries over the normalized core. Auth-gated: every public
 // query checks identity (the console is private).
 
+// Cross-kind recent signals (event ticker, ⌘K). Bounded.
+export const recent = query({
+  args: { limit: v.optional(v.number()) },
+  handler: async (ctx, { limit }) => {
+    if ((await ctx.auth.getUserIdentity()) === null) return [];
+    return await ctx.db
+      .query('signals')
+      .withIndex('by_observed')
+      .order('desc')
+      .take(Math.min(limit ?? 30, 100));
+  },
+});
+
 export const byKind = query({
   args: {
     kind: v.string(),
