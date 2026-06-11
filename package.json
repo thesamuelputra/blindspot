@@ -22,6 +22,7 @@
     "convex": "^1.41.0",
     "deck.gl": "^9.3.3",
     "fast-xml-parser": "^5.8.0",
+    "gtfs-realtime-bindings": "^2.0.0",
     "hls.js": "^1.6.16",
     "maplibre-gl": "^5.24.0",
     "motion": "^12.40.0",

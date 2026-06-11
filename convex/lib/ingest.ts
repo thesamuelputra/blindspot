@@ -57,6 +57,36 @@ export async function upsertSignals(
   return { inserted, updated };
 }
 
+export interface ReadingInput {
+  stationId: string; // "<sourceSlug>:<upstream station id>"
+  metric: string;
+  value: number;
+  unit: string;
+  at: number;
+  lat?: number;
+  lng?: number;
+  sourceSlug: string;
+}
+
+// Append readings, skipping exact (stationId, metric, at) duplicates —
+// overlapping polls are the norm for station feeds.
+export async function insertReadings(ctx: MutationCtx, readings: ReadingInput[]): Promise<number> {
+  let inserted = 0;
+  for (const r of readings) {
+    const dupe = await ctx.db
+      .query('readings')
+      .withIndex('by_station_metric_at', (q) =>
+        q.eq('stationId', r.stationId).eq('metric', r.metric).eq('at', r.at),
+      )
+      .first();
+    if (!dupe) {
+      await ctx.db.insert('readings', r);
+      inserted++;
+    }
+  }
+  return inserted;
+}
+
 export interface SourceMeta {
   slug: string;
   name: string;
