@@ -53,6 +53,7 @@ import type * as feeds_camsAggregators from "../feeds/camsAggregators.js";
 import type * as feeds_camsInstitutional from "../feeds/camsInstitutional.js";
 import type * as feeds_camsMarineHarbour from "../feeds/camsMarineHarbour.js";
 import type * as feeds_camsTourism from "../feeds/camsTourism.js";
+import type * as feeds_camsTrails from "../feeds/camsTrails.js";
 import type * as feeds_camsTransport from "../feeds/camsTransport.js";
 import type * as feeds_camsWildlife from "../feeds/camsWildlife.js";
 import type * as feeds_ccgNotship from "../feeds/ccgNotship.js";
@@ -177,6 +178,7 @@ declare const fullApi: ApiFromModules<{
   "feeds/camsInstitutional": typeof feeds_camsInstitutional;
   "feeds/camsMarineHarbour": typeof feeds_camsMarineHarbour;
   "feeds/camsTourism": typeof feeds_camsTourism;
+  "feeds/camsTrails": typeof feeds_camsTrails;
   "feeds/camsTransport": typeof feeds_camsTransport;
   "feeds/camsWildlife": typeof feeds_camsWildlife;
   "feeds/ccgNotship": typeof feeds_ccgNotship;

@@ -16,6 +16,7 @@
 // per trip). stop_times.txt is ~28MB, so it's streamed line-by-line rather than
 // held in memory.
 import { writeFileSync, mkdirSync } from 'node:fs';
+import { Buffer } from 'node:buffer';
 import { unzipSync } from 'fflate';
 
 const GTFS_URL = 'https://bct.tmix.se/Tmix.Cap.TdExport.WebApi/gtfs/?operatorIds=48';
@@ -51,11 +52,10 @@ const zipBuf = new Uint8Array(await res.arrayBuffer());
 console.log(`got ${(zipBuf.length / 1e6).toFixed(1)} MB zip, unzipping in memory …`);
 
 const files = unzipSync(zipBuf);
-const dec = new TextDecoder('utf-8');
 function text(name) {
   const bytes = files[name];
   if (!bytes) throw new Error(`zip missing ${name} — has: ${Object.keys(files).join(', ')}`);
-  return dec.decode(bytes);
+  return Buffer.from(bytes).toString('utf-8');
 }
 
 // --- stops.txt → stop_id → { name, lat, lng } ----------------------------

@@ -49,6 +49,9 @@ interface UiState {
   // the enrichment panel sets it, MapView draws it, cleared when inspect changes
   flightRoute: FlightRoute | null;
   setFlightRoute: (r: FlightRoute | null) => void;
+  // stops along the inspected bus's route (set by the inspector, drawn by MapView)
+  busStops: Array<{ name: string; lat: number; lng: number }> | null;
+  setBusStops: (s: UiState['busStops']) => void;
 }
 
 export interface FlightRoute {
@@ -88,4 +91,6 @@ export const useUi = create<UiState>((set) => ({
   setMapZoom: (mapZoom) => set({ mapZoom }),
   flightRoute: null,
   setFlightRoute: (flightRoute) => set({ flightRoute }),
+  busStops: null,
+  setBusStops: (busStops) => set({ busStops }),
 }));

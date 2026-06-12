@@ -85,6 +85,7 @@ crons.interval('cams-aggregators', { seconds: 86503 }, internal.feeds.camsAggreg
 crons.interval('cams-tourism', { seconds: 86513 }, internal.feeds.camsTourism.sync, {});
 crons.interval('cams-wildlife', { seconds: 86519 }, internal.feeds.camsWildlife.sync, {});
 crons.interval('cams-transport', { seconds: 86527 }, internal.feeds.camsTransport.sync, {});
+crons.interval('cams-trails', { seconds: 86531 }, internal.feeds.camsTrails.sync, {});
 crons.interval('pattern-of-life', { seconds: 86497 }, internal.brain.patternOfLife.computeAll, {});
 
 export default crons;

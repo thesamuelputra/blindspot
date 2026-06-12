@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "typecheck": "tsc -b --noEmit",
     "convex": "convex dev",
-    "basemap": "node scripts/fetch-basemap.mjs"
+    "basemap": "node scripts/fetch-basemap.mjs",
+    "transit-stops": "node scripts/gtfs-stops.mjs"
   },
   "dependencies": {
     "@auth/core": "^0.41.2",
@@ -45,6 +46,7 @@
     "@vitejs/plugin-react": "^6.0.2",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
+    "fflate": "^0.7.4",
     "prettier": "^3.8.4",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.61.0",

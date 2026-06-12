@@ -136,6 +136,58 @@ export function AircraftEnrichmentPanel({
   );
 }
 
+// Bus route stops (Samuel: clicking a bus shows its route's stops). Reads the
+// route from the bus's state (already in the inspector), looks up the GTFS
+// stop list, lists them, and publishes them to the map for stop dots.
+export function BusStopsPanel({ routeId }: { routeId?: string }) {
+  const setBusStops = useUi((s) => s.setBusStops);
+  const [route, setRoute] = useState<import('@/data/transitStops').RouteStops | null>(null);
+
+  useEffect(() => {
+    let live = true;
+    setRoute(null);
+    void import('@/data/transitStops').then(({ getRouteStops }) =>
+      getRouteStops(routeId).then((r) => {
+        if (!live) return;
+        setRoute(r);
+        setBusStops(r?.stops ?? null);
+      }),
+    );
+    return () => {
+      live = false;
+      setBusStops(null);
+    };
+  }, [routeId, setBusStops]);
+
+  if (!route) return null;
+  return (
+    <div style={{ marginTop: 10 }}>
+      <div className="microlabel">
+        ROUTE {route.short} · {route.stops.length} STOPS (on map)
+      </div>
+      <ol
+        className="mono"
+        style={{
+          margin: '6px 0 0',
+          padding: '0 0 0 18px',
+          maxHeight: 200,
+          overflowY: 'auto',
+          fontSize: 11,
+          color: 'var(--text-2)',
+          lineHeight: 1.7,
+        }}
+      >
+        {route.stops.map((s, i) => (
+          <li key={i}>{s.name}</li>
+        ))}
+      </ol>
+      <div className="microlabel" style={{ marginTop: 4, color: 'var(--text-3)' }}>
+        BC TRANSIT
+      </div>
+    </div>
+  );
+}
+
 interface FerryEnrichment {
   spec?: {
     name: string;

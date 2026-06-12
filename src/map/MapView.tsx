@@ -146,6 +146,25 @@ export function MapView({ page }: { page: string }) {
     );
   }
 
+  // stops along the inspected bus's route
+  const busStops = useUi((s) => s.busStops);
+  if (busStops && busStops.length) {
+    deckLayers.push(
+      new ScatterplotLayer<{ lng: number; lat: number; name: string }>({
+        id: 'bus-stops',
+        data: busStops,
+        getPosition: (d) => [d.lng, d.lat],
+        getRadius: 3.5,
+        radiusUnits: 'pixels',
+        getFillColor: [52, 211, 153, 220],
+        stroked: true,
+        getLineColor: [10, 12, 16, 220],
+        lineWidthMinPixels: 1,
+        pickable: false,
+      }),
+    );
+  }
+
   // planned flight path of the inspected aircraft (origin→dest airports)
   const flightRoute = useUi((s) => s.flightRoute);
   if (flightRoute) {

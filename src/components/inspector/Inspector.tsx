@@ -4,7 +4,7 @@ import { LiveMedia } from '@/components/media/LiveMedia';
 import { AddToIncident } from '@/components/incidents/AddToIncident';
 import { WatchToggle } from '@/components/watch/WatchToggle';
 import { PatternOfLife } from '@/components/watch/PatternOfLife';
-import { AircraftEnrichmentPanel, FerryEnrichmentPanel } from './Enrichment';
+import { AircraftEnrichmentPanel, FerryEnrichmentPanel, BusStopsPanel } from './Enrichment';
 import type { InspectTarget } from '@/state/ui';
 
 // INSPECTOR (ARCHITECTURE §10 interaction contract): click = the thing itself.
@@ -154,6 +154,7 @@ function MoverPanel({
       {target.kind === 'ferry' && (
         <FerryEnrichmentPanel extId={target.extId} route={state.route as string | undefined} />
       )}
+      {target.kind === 'bus' && <BusStopsPanel routeId={state.routeId as string | undefined} />}
       <Row k="LAST FIX" v={e ? ago(now, e.lastSeenAt) : 'loading…'} />
       <Row k="SPEED" v={e?.speed !== undefined ? `${Math.round(e.speed)} kt` : undefined} />
       <Row k="HEADING" v={e?.heading !== undefined ? `${Math.round(e.heading)}°` : undefined} />
