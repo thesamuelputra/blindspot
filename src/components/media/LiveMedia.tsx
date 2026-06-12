@@ -27,47 +27,71 @@ export function LiveMedia({ camera }: { camera: CameraDoc }) {
 }
 
 function Snapshot({ camera }: { camera: CameraDoc }) {
-  const refreshMs = Math.max(camera.refreshSec ?? 60, 15) * 1000;
-  const [tick, setTick] = useState(() => Date.now());
+  // refresh at the camera's OWN native rate (Samuel: max rate per cam). The
+  // 2s floor only stops a misconfigured cam from hammering; it never slows a
+  // cam that genuinely updates faster than the old 15s default.
+  const refreshMs = Math.max(camera.refreshSec ?? 30, 2) * 1000;
+  const sep = camera.mediaUrl.includes('?') ? '&' : '?';
+  const bust = (t: number) => `${camera.mediaUrl}${sep}_t=${t}`;
+
+  const [shown, setShown] = useState(() => bust(Date.now())); // currently visible frame
+  const [shownAt, setShownAt] = useState(() => Date.now());
   const [error, setError] = useState(false);
-  const now = useNow(5000);
+  const pending = useRef<HTMLImageElement | null>(null);
+  const now = useNow(2000);
 
   useEffect(() => {
-    const id = setInterval(() => {
-      setTick(Date.now());
-      setError(false);
-    }, refreshMs);
-    return () => clearInterval(id);
-  }, [refreshMs]);
+    const fetchNext = () => {
+      const t = Date.now();
+      const next = bust(t);
+      // preload off-screen, promote only once decoded → no black flash
+      const img = new Image();
+      pending.current = img;
+      img.onload = () => {
+        if (pending.current !== img) return;
+        setShown(next);
+        setShownAt(t);
+        setError(false);
+      };
+      img.onerror = () => {
+        if (pending.current === img) setError(true);
+      };
+      img.src = next;
+    };
+    const id = setInterval(fetchNext, refreshMs);
+    return () => {
+      clearInterval(id);
+      pending.current = null;
+    };
+  }, [refreshMs, camera.mediaUrl]);
 
-  const sep = camera.mediaUrl.includes('?') ? '&' : '?';
+  const age = Math.max(0, Math.floor((now - shownAt) / 1000));
   return (
     <div>
-      {error ? (
-        <div
-          className="mono"
-          style={{
-            aspectRatio: '4/3',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'var(--bg-0)',
-            color: 'var(--text-3)',
-            fontSize: 11,
-          }}
-        >
-          FEED UNAVAILABLE
-        </div>
-      ) : (
+      <div style={{ position: 'relative' }}>
         <img
-          src={`${camera.mediaUrl}${sep}_t=${tick}`}
+          src={shown}
           alt={camera.name}
           onError={() => setError(true)}
           style={{ width: '100%', display: 'block', background: '#000' }}
         />
-      )}
+        <span
+          className="dot"
+          title="live"
+          style={{
+            position: 'absolute',
+            top: 6,
+            right: 6,
+            width: 6,
+            height: 6,
+            borderRadius: '50%',
+            background: error ? 'var(--critical)' : 'var(--ok)',
+            boxShadow: error ? 'none' : '0 0 6px var(--ok)',
+          }}
+        />
+      </div>
       <div className="microlabel" style={{ padding: '4px 0' }}>
-        refreshed {Math.max(0, Math.floor((now - tick) / 1000))}s ago · every {Math.round(refreshMs / 1000)}s
+        {error ? 'STALLED · RETRYING' : `live · updated ${age}s ago · every ${Math.round(refreshMs / 1000)}s`}
       </div>
     </div>
   );

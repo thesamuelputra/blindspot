@@ -79,6 +79,16 @@ Free tier verified: **1M function calls/mo, 20 GB-h action compute, 0.5 GB DB st
 - **Bandwidth (1 GB/mo):** counters maintained incrementally in `snapshots` by ingest mutations — never per-tick table scans; `raw` ≤ 2KB; polygons simplified before write.
 - **Total estimate ≈ 1–1.3M calls/mo** → free tier ± ~$1 of overage. **Flag for Samuel:** staying strictly free-tier (no card) means a bandwidth overrun can stop mutations; enabling pay-as-you-go (≈$1–3/mo realistic) removes that cliff. Same decision moment as the D2 worker hosting (~$2/mo) — both at deploy time.
 
+## D13. Camera sourcing posture — relaxed for the private operator (amended 2026-06-11)
+
+Per Samuel: BlindSpot is a private, auth-gated, single-operator console for personal use, so the conservative "sanctioned-only" camera caution is dropped. **Any webcam that is publicly broadcast and viewable is in** — tourism/marina/business/aggregator-listed/operator cams, regardless of a third-party aggregator's reuse ToS, since the app is private and non-redistributing. Dig aggressively.
+
+**Two lines still held (legal, not caution — the harm is to third parties, which "personal use" does not resolve):**
+1. **No unsecured / private / residential cameras** (Insecam-style directories, default-credential IP cams, anything never meant to be public). Accessing another person's camera without consent is unauthorized access + a privacy/voyeurism issue in BC regardless of who's watching.
+2. **No decoding/retransmitting encrypted radio** (illegal under the Radiocommunication Act).
+
+Everything an operator *chose* to put online is fair game. Attribution is kept (cheap, correct) but no longer gates inclusion.
+
 ## D9. Excluded sources (licensing guardrails — do not revisit casually)
 
 | Source | Why excluded |
