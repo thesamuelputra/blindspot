@@ -63,6 +63,54 @@ export const AIRCRAFT_TYPES: Record<string, AircraftTypeSpec> = {
   PC12: { name: 'Pilatus PC-12', role: 'business', pax: 9, engines: '1× PT6A turboprop', cruiseKt: 280 },
   C25A: { name: 'Cessna Citation CJ2', role: 'business', pax: 7, engines: '2× turbofan', cruiseKt: 410 },
   GLF5: { name: 'Gulfstream G550', role: 'business', pax: 16, engines: '2× turbofan', cruiseKt: 488 },
+
+  // ── added: more widebodies / long-haul (Pacific overflights, YVR-bound) ──
+  A359: { name: 'Airbus A350-900', role: 'airliner', pax: 325, engines: '2× Trent XWB turbofan', cruiseKt: 488, mtowKg: 280000 },
+  A35K: { name: 'Airbus A350-1000', role: 'airliner', pax: 369, engines: '2× Trent XWB turbofan', cruiseKt: 488, mtowKg: 322000 },
+  B788: { name: 'Boeing 787-8 Dreamliner', role: 'airliner', pax: 248, engines: '2× turbofan', cruiseKt: 488, mtowKg: 228000 },
+  B789: { name: 'Boeing 787-9 Dreamliner', role: 'airliner', pax: 296, engines: '2× turbofan', cruiseKt: 488, mtowKg: 254000 },
+  B78X: { name: 'Boeing 787-10 Dreamliner', role: 'airliner', pax: 336, engines: '2× turbofan', cruiseKt: 488, mtowKg: 254000 },
+  B744: { name: 'Boeing 747-400', role: 'airliner', pax: 416, engines: '4× turbofan', cruiseKt: 493, mtowKg: 396890 },
+  B752: { name: 'Boeing 757-200', role: 'airliner', pax: 200, engines: '2× turbofan', cruiseKt: 458, mtowKg: 115680 },
+  B753: { name: 'Boeing 757-300', role: 'airliner', pax: 243, engines: '2× turbofan', cruiseKt: 458, mtowKg: 123600 },
+
+  // ── added: more regional jets / turboprops ──
+  E190: { name: 'Embraer E190', role: 'regional', pax: 114, engines: '2× CF34 turbofan', cruiseKt: 447 },
+  E195: { name: 'Embraer E195', role: 'regional', pax: 124, engines: '2× CF34 turbofan', cruiseKt: 447 },
+  E290: { name: 'Embraer E190-E2', role: 'regional', pax: 114, engines: '2× PW1900G turbofan', cruiseKt: 448, mtowKg: 56400 },
+  CRJ2: { name: 'Bombardier CRJ200', role: 'regional', pax: 50, engines: '2× CF34 turbofan', cruiseKt: 424 },
+  CRJ7: { name: 'Bombardier CRJ700', role: 'regional', pax: 70, engines: '2× CF34 turbofan', cruiseKt: 447 },
+
+  // ── added: more floatplanes / bush (Harbour Air, KD Air, charter) ──
+  DHC7: { name: 'DHC-7 Dash 7', role: 'regional', pax: 50, engines: '4× PT6A turboprop', cruiseKt: 231 },
+  PC6: { name: 'Pilatus PC-6 Turbo Porter', role: 'floatplane', pax: 6, engines: '1× PT6A turboprop', cruiseKt: 115 },
+  GA8: { name: 'GippsAero GA8 Airvan', role: 'floatplane', pax: 7, engines: '1× piston', cruiseKt: 125 },
+  CNDO: { name: 'Found FBA-2C Bush Hawk', role: 'floatplane', pax: 4, engines: '1× piston', cruiseKt: 120 },
+  C208B: { name: 'Cessna 208B Grand Caravan EX', role: 'floatplane', pax: 13, engines: '1× PT6A turboprop', cruiseKt: 186 },
+
+  // ── added: more helicopters (EMS, Coast Guard, utility, charter) ──
+  EC30: { name: 'Airbus H130 (EC130)', role: 'helicopter', pax: 7, engines: '1× turboshaft', cruiseKt: 130 },
+  H145: { name: 'Airbus H145', role: 'helicopter', pax: 10, engines: '2× turboshaft', cruiseKt: 130 },
+  H160: { name: 'Airbus H160', role: 'helicopter', pax: 12, engines: '2× turboshaft', cruiseKt: 138 },
+  A139: { name: 'Leonardo AW139', role: 'helicopter', pax: 15, engines: '2× turboshaft', cruiseKt: 165 },
+  R44: { name: 'Robinson R44', role: 'helicopter', pax: 3, engines: '1× piston', cruiseKt: 109 },
+  R66: { name: 'Robinson R66', role: 'helicopter', pax: 4, engines: '1× turboshaft', cruiseKt: 110 },
+  MD52: { name: 'MD 520N NOTAR', role: 'helicopter', pax: 4, engines: '1× turboshaft', cruiseKt: 135 },
+  B429: { name: 'Bell 429', role: 'helicopter', pax: 7, engines: '2× turboshaft', cruiseKt: 141 },
+  S76: { name: 'Sikorsky S-76', role: 'helicopter', pax: 12, engines: '2× turboshaft', cruiseKt: 155 },
+  AS65: { name: 'Airbus AS365 Dauphin', role: 'helicopter', pax: 12, engines: '2× turboshaft', cruiseKt: 150 },
+  H225: { name: 'Airbus H225 Super Puma', role: 'helicopter', pax: 19, engines: '2× turboshaft', cruiseKt: 150 },
+
+  // ── added: more business / GA ──
+  BE20: { name: 'Beechcraft King Air 200', role: 'business', pax: 9, engines: '2× PT6A turboprop', cruiseKt: 289 },
+  BE36: { name: 'Beechcraft Bonanza A36', role: 'ga', pax: 5, engines: '1× piston', cruiseKt: 176 },
+  PA31: { name: 'Piper PA-31 Navajo', role: 'ga', pax: 7, engines: '2× piston', cruiseKt: 190 },
+  SR22: { name: 'Cirrus SR22', role: 'ga', pax: 4, engines: '1× piston', cruiseKt: 183 },
+  C310: { name: 'Cessna 310', role: 'ga', pax: 5, engines: '2× piston', cruiseKt: 200 },
+  GLF6: { name: 'Gulfstream G650', role: 'business', pax: 18, engines: '2× turbofan', cruiseKt: 488 },
+  CL35: { name: 'Bombardier Challenger 350', role: 'business', pax: 10, engines: '2× turbofan', cruiseKt: 470 },
+  LJ45: { name: 'Learjet 45', role: 'business', pax: 9, engines: '2× turbofan', cruiseKt: 457 },
+  E55P: { name: 'Embraer Phenom 300', role: 'business', pax: 9, engines: '2× turbofan', cruiseKt: 453 },
 };
 
 export function lookupAircraftType(icaoType: string | undefined): AircraftTypeSpec | null {

@@ -29,6 +29,29 @@ export const FERRY_FLEET: Record<string, FerrySpec> = {
   'skeena-queen': { name: 'Skeena Queen', builtYear: 1997, carCapacity: 92, passengerCapacity: 450, lengthM: 80, serviceSpeedKn: 14 },
   'mayne-queen': { name: 'Mayne Queen', builtYear: 1965, carCapacity: 70, passengerCapacity: 400, lengthM: 60, serviceSpeedKn: 13 },
   'bowen-queen': { name: 'Bowen Queen', builtYear: 1965, carCapacity: 70, passengerCapacity: 400, lengthM: 60, serviceSpeedKn: 13 },
+
+  // ── added: Salish class (LNG-fuelled, intermediate; built 2016, Remontowa) ──
+  'salish-orca': { name: 'Salish Orca', class: 'Salish', builtYear: 2016, carCapacity: 138, passengerCapacity: 600, lengthM: 107, serviceSpeedKn: 15.5 },
+  'salish-eagle': { name: 'Salish Eagle', class: 'Salish', builtYear: 2016, carCapacity: 138, passengerCapacity: 600, lengthM: 107, serviceSpeedKn: 15.5 },
+  'salish-raven': { name: 'Salish Raven', class: 'Salish', builtYear: 2016, carCapacity: 138, passengerCapacity: 600, lengthM: 107, serviceSpeedKn: 15.5 },
+  'salish-heron': { name: 'Salish Heron', class: 'Salish', builtYear: 2021, carCapacity: 138, passengerCapacity: 600, lengthM: 107, serviceSpeedKn: 15.5 },
+
+  // ── added: intermediate / I-class (Island Sky renamed Malaspina Sky 2019) ──
+  // Keyed under both the historical and current names so the feed's
+  // slugify(vesselName) extId matches whichever the API now emits.
+  'island-sky': { name: 'Malaspina Sky (ex Island Sky)', class: 'I', builtYear: 2008, carCapacity: 112, passengerCapacity: 450, lengthM: 100, serviceSpeedKn: 14.5 },
+  'malaspina-sky': { name: 'Malaspina Sky (ex Island Sky)', class: 'I', builtYear: 2008, carCapacity: 112, passengerCapacity: 450, lengthM: 100, serviceSpeedKn: 14.5 },
+
+  // ── added: cable ferry (Buckley Bay–Denman Island, longest cable crossing) ──
+  'baynes-sound-connector': { name: 'Baynes Sound Connector', class: 'Cable', builtYear: 2015, carCapacity: 45, passengerCapacity: 150, lengthM: 78.5, serviceSpeedKn: 8.5 },
+
+  // ── added: Q-class and small/utility vessels serving VI routes ──
+  quinsam: { name: 'Quinsam', class: 'Q', builtYear: 1982, carCapacity: 63, passengerCapacity: 400, lengthM: 81, serviceSpeedKn: 12 },
+  quinitsa: { name: 'Quinitsa', class: 'Q', builtYear: 1977, carCapacity: 44, passengerCapacity: 394, lengthM: 65, serviceSpeedKn: 12 },
+  tachek: { name: 'Tachek', class: 'T', builtYear: 1969, carCapacity: 26, passengerCapacity: 243, lengthM: 49, serviceSpeedKn: 11 },
+  klitsa: { name: 'Klitsa', class: 'K', builtYear: 1972, carCapacity: 19, passengerCapacity: 195, lengthM: 47, serviceSpeedKn: 10 },
+  kahloke: { name: 'Kahloke', class: 'K', builtYear: 1973, carCapacity: 21, passengerCapacity: 200, lengthM: 55, serviceSpeedKn: 12 },
+  kuper: { name: "Pune'luxutth (ex Kuper)", class: 'K', builtYear: 1985, carCapacity: 26, passengerCapacity: 100, lengthM: 49, serviceSpeedKn: 11 },
 };
 
 // BC Ferries route codes → readable origin/destination.
@@ -43,6 +66,19 @@ export const FERRY_ROUTES: Record<string, string> = {
   LNGHSB: 'Langdale to Horseshoe Bay',
   SWBFUL: 'Swartz Bay to Fulford Harbour (Salt Spring)',
   SWBSGI: 'Swartz Bay to Southern Gulf Islands',
+
+  // ── added: reciprocals of the existing minor-route codes ──
+  FULSWB: 'Fulford Harbour (Salt Spring) to Swartz Bay',
+  SGISWB: 'Southern Gulf Islands to Swartz Bay',
+  // ── added: Tsawwassen–Southern Gulf Islands (Salish-class) ──
+  TSASGI: 'Tsawwassen to Southern Gulf Islands',
+  SGITSA: 'Southern Gulf Islands to Tsawwassen',
+  // ── added: Comox (Little River) ⇄ Powell River (Westview), Salish-class ──
+  CMXPWR: 'Comox (Little River) to Powell River (Westview)',
+  PWRCMX: 'Powell River (Westview) to Comox (Little River)',
+  // ── added: Bowen Island (BOW terminal code) ──
+  HSBBOW: 'Horseshoe Bay to Snug Cove (Bowen Island)',
+  BOWHSB: 'Snug Cove (Bowen Island) to Horseshoe Bay',
 };
 
 export function lookupFerry(extId: string): FerrySpec | null {

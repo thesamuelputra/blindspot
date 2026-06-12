@@ -61,3 +61,16 @@ export const wipeUsers = internalMutation({
     return { deleted };
   },
 });
+
+// Dev/RUNBOOK one-off: npx convex run admin:deleteSource '{"slug":"bamfield-msc-cams"}'
+export const deleteSource = internalMutation({
+  args: { slug: v.string() },
+  handler: async (ctx, { slug }) => {
+    const row = await ctx.db
+      .query('sources')
+      .withIndex('by_slug', (q) => q.eq('slug', slug))
+      .unique();
+    if (row) await ctx.db.delete(row._id);
+    return row ? `deleted source ${slug}` : 'not found';
+  },
+});
