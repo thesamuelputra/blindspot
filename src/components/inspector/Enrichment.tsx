@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAction, useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
+import { useUi } from '@/state/ui';
 
 // Intrinsic detail panels (Samuel's contract: a click shows what the thing IS,
 // who owns it, what it carries, where it is going). Aircraft enrichment is an
@@ -34,11 +35,30 @@ interface AircraftEnrichment {
     cruiseKt?: number;
     mtowKg?: number;
   } | null;
-  route?: { airline?: string; origin?: string; destination?: string };
+  route?: {
+    airline?: string;
+    origin?: string;
+    destination?: string;
+    originLat?: number;
+    originLng?: number;
+    destLat?: number;
+    destLng?: number;
+  };
 }
 
-export function AircraftEnrichmentPanel({ hex, callsign }: { hex: string; callsign?: string }) {
+export function AircraftEnrichmentPanel({
+  hex,
+  callsign,
+  lat,
+  lng,
+}: {
+  hex: string;
+  callsign?: string;
+  lat?: number;
+  lng?: number;
+}) {
   const enrich = useAction(api.enrich.aircraft);
+  const setFlightRoute = useUi((s) => s.setFlightRoute);
   const [data, setData] = useState<AircraftEnrichment | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -48,15 +68,34 @@ export function AircraftEnrichmentPanel({ hex, callsign }: { hex: string; callsi
     setData(null);
     void enrich({ hex, callsign })
       .then((r) => {
-        if (live) setData(r as AircraftEnrichment | null);
+        if (!live) return;
+        const d = r as AircraftEnrichment | null;
+        setData(d);
+        // publish the planned flight path for MapView to draw
+        const rt = d?.route;
+        if (rt?.originLat != null && rt.destLat != null && lat != null && lng != null) {
+          setFlightRoute({
+            originLat: rt.originLat,
+            originLng: rt.originLng!,
+            originName: rt.origin,
+            destLat: rt.destLat,
+            destLng: rt.destLng!,
+            destName: rt.destination,
+            curLat: lat,
+            curLng: lng,
+          });
+        } else {
+          setFlightRoute(null);
+        }
       })
       .finally(() => {
         if (live) setLoading(false);
       });
     return () => {
       live = false;
+      setFlightRoute(null);
     };
-  }, [enrich, hex, callsign]);
+  }, [enrich, hex, callsign, lat, lng, setFlightRoute]);
 
   if (loading) {
     return (
@@ -65,7 +104,8 @@ export function AircraftEnrichmentPanel({ hex, callsign }: { hex: string; callsi
       </div>
     );
   }
-  if (!data || (!data.owner && !data.photo && !data.spec)) return null;
+  if (!data || (!data.owner && !data.photo && !data.spec && !data.typeName && !data.route?.origin))
+    return null;
 
   return (
     <div style={{ marginBottom: 10 }}>

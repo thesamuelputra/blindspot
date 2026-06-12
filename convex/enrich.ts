@@ -58,6 +58,11 @@ export const aircraft = action({
           destination: fr.destination
             ? `${fr.destination.iata_code} ${fr.destination.municipality ?? ''}`.trim()
             : undefined,
+          // airport coordinates so the client can draw the planned flight path
+          originLat: fr.origin?.latitude,
+          originLng: fr.origin?.longitude,
+          destLat: fr.destination?.latitude,
+          destLng: fr.destination?.longitude,
         };
       }
     }
@@ -79,6 +84,10 @@ interface AircraftRoute {
   airline?: string;
   origin?: string;
   destination?: string;
+  originLat?: number;
+  originLng?: number;
+  destLat?: number;
+  destLng?: number;
 }
 interface HexdbAircraft {
   Registration?: string;
@@ -91,8 +100,8 @@ interface AdsbdbCallsign {
   response?: {
     flightroute?: {
       airline?: { name?: string };
-      origin?: { iata_code?: string; municipality?: string };
-      destination?: { iata_code?: string; municipality?: string };
+      origin?: { iata_code?: string; municipality?: string; latitude?: number; longitude?: number };
+      destination?: { iata_code?: string; municipality?: string; latitude?: number; longitude?: number };
     };
   };
 }

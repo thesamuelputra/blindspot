@@ -1,6 +1,6 @@
 import { IconLayer } from '@deck.gl/layers';
 import { type LayerDef } from '../types';
-import { type SnapshotMover } from './aircraft';
+import { type SnapshotMover, MOVER_ATLAS, MOVER_MAPPING } from './aircraft';
 import { useAnimatedSnapshot } from '@/map/useAnimatedSnapshot';
 import { buildMoverLabels } from '../moverText';
 
@@ -23,14 +23,12 @@ export const ferriesLayer: LayerDef<SnapshotMover> = {
       new IconLayer<SnapshotMover>({
         id: 'ferries',
         data,
-        iconAtlas: '/icons/chevron.png',
-        iconMapping: { mover: { x: 0, y: 0, width: 64, height: 64, mask: true } },
-        getIcon: () => 'mover',
+        iconAtlas: MOVER_ATLAS,
+        iconMapping: MOVER_MAPPING,
+        getIcon: () => 'boat',
         getPosition: (d) => [d.lng, d.lat],
-        // deck.gl rotates counterclockwise; heading is clockwise from north
-        getAngle: (d) => -(d.h ?? 0),
         getColor: FERRY_VIOLET,
-        getSize: 14,
+        getSize: 18,
         sizeUnits: 'pixels',
         pickable: true,
       }),

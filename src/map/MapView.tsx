@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useQuery } from 'convex/react';
 import type { Layer, PickingInfo } from '@deck.gl/core';
-import { ScatterplotLayer } from '@deck.gl/layers';
+import { ScatterplotLayer, PathLayer, TextLayer } from '@deck.gl/layers';
 import { useNow } from '@/lib/time';
 import { buildHistoryTrail, buildFutureTrail } from './trailLayers';
 import { api } from '../../convex/_generated/api';
@@ -54,18 +54,22 @@ type TrailPayload = {
 
 // Smooth solid history + (for the inspected mover) dashed dead-reckoned future
 // (src/map/trailLayers.ts — Samuel's contract: smooth, solid past, dashed future).
+// buses + aircraft follow roads/airways → accurate raw track, no spline
+const RAW_TRACK_KINDS = new Set(['bus', 'aircraft']);
+
 function trailToLayers(
   id: string,
   trail: TrailPayload | undefined,
   color: [number, number, number],
-  futureKind?: string,
+  kind?: string,
 ): Layer[] {
   if (!trail) return [];
-  // anchor the curve to the entity's latest fix so the trail meets the marker
+  // anchor to the entity's latest fix so the trail meets the marker
   const points = [...trail.points, { lat: trail.entity.lat, lng: trail.entity.lng, at: 0 }];
-  const layers = buildHistoryTrail(id, points, color);
-  if (futureKind && !trail.entity.stale) {
-    layers.push(...buildFutureTrail(`${id}-future`, futureKind, trail.entity, color));
+  const smooth = !(kind && RAW_TRACK_KINDS.has(kind));
+  const layers = buildHistoryTrail(id, points, color, smooth);
+  if (kind && !trail.entity.stale) {
+    layers.push(...buildFutureTrail(`${id}-future`, kind, trail.entity, color));
   }
   return layers;
 }
@@ -128,7 +132,7 @@ export function MapView({ page }: { page: string }) {
       ? { kind: inspectedMover.kind, extId: inspectedMover.extId, sinceMs: TRAIL_INSPECT_MS, limit: 500 }
       : 'skip',
   );
-  deckLayers.push(...trailToLayers('trail-hover', hoverTrail, [56, 189, 248]));
+  deckLayers.push(...trailToLayers('trail-hover', hoverTrail, [56, 189, 248], hoverMover?.kind));
   deckLayers.push(
     ...trailToLayers('trail-inspect', inspectTrail, [167, 139, 250], inspectedMover?.kind),
   );
@@ -139,6 +143,67 @@ export function MapView({ page }: { page: string }) {
         { tracks: replayTracks ?? [], signals: replaySignals ?? [], fromMs: replayWin.fromMs },
         playhead,
       ),
+    );
+  }
+
+  // planned flight path of the inspected aircraft (origin→dest airports)
+  const flightRoute = useUi((s) => s.flightRoute);
+  if (flightRoute) {
+    deckLayers.push(
+      new PathLayer<{ path: [number, number][]; flown: boolean }>({
+        id: 'flight-route',
+        data: [
+          {
+            path: [
+              [flightRoute.originLng, flightRoute.originLat],
+              [flightRoute.curLng, flightRoute.curLat],
+            ],
+            flown: true,
+          },
+          {
+            path: [
+              [flightRoute.curLng, flightRoute.curLat],
+              [flightRoute.destLng, flightRoute.destLat],
+            ],
+            flown: false,
+          },
+        ],
+        getPath: (d) => d.path,
+        getColor: (d) => (d.flown ? [56, 189, 248, 150] : [56, 189, 248, 90]),
+        getWidth: 1.2,
+        widthUnits: 'pixels',
+      }),
+      new ScatterplotLayer<{ lng: number; lat: number; name?: string }>({
+        id: 'flight-airports',
+        data: [
+          { lng: flightRoute.originLng, lat: flightRoute.originLat, name: flightRoute.originName },
+          { lng: flightRoute.destLng, lat: flightRoute.destLat, name: flightRoute.destName },
+        ],
+        getPosition: (d) => [d.lng, d.lat],
+        getRadius: 5,
+        radiusUnits: 'pixels',
+        getFillColor: [56, 189, 248, 220],
+        stroked: true,
+        getLineColor: [10, 12, 16, 220],
+        lineWidthMinPixels: 1,
+      }),
+      new TextLayer<{ lng: number; lat: number; name?: string }>({
+        id: 'flight-airport-labels',
+        data: [
+          { lng: flightRoute.originLng, lat: flightRoute.originLat, name: flightRoute.originName },
+          { lng: flightRoute.destLng, lat: flightRoute.destLat, name: flightRoute.destName },
+        ].filter((d) => !!d.name),
+        getPosition: (d) => [d.lng, d.lat],
+        getText: (d) => d.name!,
+        getSize: 10,
+        getColor: [56, 189, 248, 235],
+        getPixelOffset: [0, -12],
+        fontFamily: '"JetBrains Mono Variable", ui-monospace, monospace',
+        fontWeight: 700,
+        background: true,
+        getBackgroundColor: [10, 12, 16, 200],
+        backgroundPadding: [3, 1, 3, 1],
+      }),
     );
   }
 

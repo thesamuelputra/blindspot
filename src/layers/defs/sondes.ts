@@ -1,5 +1,5 @@
 import { IconLayer } from '@deck.gl/layers';
-import { type SnapshotMover } from './aircraft';
+import { type SnapshotMover, MOVER_ATLAS, MOVER_MAPPING } from './aircraft';
 import { useAnimatedSnapshot } from '@/map/useAnimatedSnapshot';
 import { buildMoverLabels } from '../moverText';
 import type { LayerDef } from '../types';
@@ -21,14 +21,12 @@ export const sondesLayer: LayerDef<SnapshotMover> = {
       new IconLayer<SnapshotMover>({
         id: 'sondes',
         data,
-        iconAtlas: '/icons/chevron.png',
-        iconMapping: { mover: { x: 0, y: 0, width: 64, height: 64, mask: true } },
-        getIcon: () => 'mover',
+        iconAtlas: MOVER_ATLAS,
+        iconMapping: MOVER_MAPPING,
+        getIcon: () => 'balloon',
         getPosition: (d) => [d.lng, d.lat],
-        // deck.gl rotates counterclockwise; heading is clockwise from north
-        getAngle: (d) => -(d.h ?? 0),
         getColor: [245, 158, 11, 230],
-        getSize: 14,
+        getSize: 17,
         sizeUnits: 'pixels',
         pickable: true,
       }),

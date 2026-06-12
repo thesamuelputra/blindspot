@@ -40,6 +40,8 @@ export const AIRCRAFT_TYPES: Record<string, AircraftTypeSpec> = {
   A20N: { name: 'Airbus A320neo', role: 'airliner', pax: 195, engines: '2× turbofan', cruiseKt: 450 },
   E75L: { name: 'Embraer E175', role: 'regional', pax: 88, engines: '2× CF34 turbofan', cruiseKt: 447 },
   CRJ9: { name: 'Bombardier CRJ900', role: 'regional', pax: 90, engines: '2× CF34 turbofan', cruiseKt: 470 },
+  BCS1: { name: 'Airbus A220-100', role: 'airliner', pax: 135, engines: '2× PW1500G turbofan', cruiseKt: 447 },
+  BCS3: { name: 'Airbus A220-300', role: 'airliner', pax: 160, engines: '2× PW1500G turbofan', cruiseKt: 447 },
 
   // widebodies (overflights)
   A332: { name: 'Airbus A330-200', role: 'airliner', pax: 247, engines: '2× turbofan', cruiseKt: 470 },

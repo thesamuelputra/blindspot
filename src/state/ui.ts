@@ -44,6 +44,21 @@ interface UiState {
   // current map zoom (MapShell writes on zoomend; label density gates on it)
   mapZoom: number;
   setMapZoom: (z: number) => void;
+  // planned flight path of the inspected aircraft (origin→dest airports);
+  // the enrichment panel sets it, MapView draws it, cleared when inspect changes
+  flightRoute: FlightRoute | null;
+  setFlightRoute: (r: FlightRoute | null) => void;
+}
+
+export interface FlightRoute {
+  originLat: number;
+  originLng: number;
+  originName?: string;
+  destLat: number;
+  destLng: number;
+  destName?: string;
+  curLat: number;
+  curLng: number;
 }
 
 export const useUi = create<UiState>((set) => ({
@@ -70,4 +85,6 @@ export const useUi = create<UiState>((set) => ({
   requestFlyTo: (flyTo) => set({ flyTo }),
   mapZoom: 7,
   setMapZoom: (mapZoom) => set({ mapZoom }),
+  flightRoute: null,
+  setFlightRoute: (flightRoute) => set({ flightRoute }),
 }));

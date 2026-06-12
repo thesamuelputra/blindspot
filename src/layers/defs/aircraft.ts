@@ -44,6 +44,9 @@ export const MOVER_MAPPING = {
   chevron: { x: 0, y: 0, width: 64, height: 64, mask: true },
   plane: { x: 64, y: 0, width: 64, height: 64, mask: true },
   heli: { x: 128, y: 0, width: 64, height: 64, mask: true },
+  bus: { x: 192, y: 0, width: 64, height: 64, mask: true },
+  balloon: { x: 256, y: 0, width: 64, height: 64, mask: true },
+  boat: { x: 320, y: 0, width: 64, height: 64, mask: true },
 };
 
 const MIL_AMBER: [number, number, number, number] = [245, 158, 11, 255];

@@ -51,15 +51,21 @@ function smoothPath(points: TrailPoint[]): Array<[number, number]> {
   return out;
 }
 
-// Solid history trail: smoothed curve, alpha ramping oldest→newest so the
-// direction of travel reads instantly.
+// Solid history trail, alpha ramping oldest→newest so direction of travel
+// reads instantly. `smooth` curves the path (vessels/ferries through open
+// water); buses and aircraft pass smooth=false so the trail is the ACCURATE
+// recorded track — a road-following bus or an airway-following jet must not
+// have its corners rounded off by a spline.
 export function buildHistoryTrail(
   id: string,
   points: TrailPoint[],
   color: [number, number, number],
+  smooth = true,
 ): Layer[] {
   if (points.length < 2) return [];
-  const path = smoothPath(points);
+  const path = smooth
+    ? smoothPath(points)
+    : points.map((p) => [p.lng, p.lat] as [number, number]);
   const segs = [];
   for (let i = 1; i < path.length; i++) {
     segs.push({

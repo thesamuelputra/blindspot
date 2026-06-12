@@ -14,6 +14,8 @@ import type { InspectTarget } from '@/state/ui';
 interface TrailPayload {
   entity: {
     label: string;
+    lat: number;
+    lng: number;
     heading?: number;
     speed?: number;
     altitude?: number;
@@ -142,7 +144,12 @@ function MoverPanel({
         {e?.stale ? ' · STALE' : ''}
       </div>
       {target.kind === 'aircraft' && (
-        <AircraftEnrichmentPanel hex={target.extId} callsign={target.label} />
+        <AircraftEnrichmentPanel
+          hex={target.extId}
+          callsign={target.label}
+          lat={e?.lat}
+          lng={e?.lng}
+        />
       )}
       {target.kind === 'ferry' && (
         <FerryEnrichmentPanel extId={target.extId} route={state.route as string | undefined} />

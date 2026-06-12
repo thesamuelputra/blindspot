@@ -27,9 +27,13 @@ export const camsLayer: LayerDef<Camera> = {
       new IconLayer<Camera>({
         id: 'cams',
         data,
-        iconAtlas: '/icons/cctv.png',
-        iconMapping: { cam: { x: 0, y: 0, width: 64, height: 64, mask: true } },
-        getIcon: () => 'cam',
+        iconAtlas: '/icons/camicons.png',
+        iconMapping: {
+          cctv: { x: 0, y: 0, width: 64, height: 64, mask: true },
+          hydrophone: { x: 64, y: 0, width: 64, height: 64, mask: true },
+        },
+        // audio nodes (hydrophones) get the sound-wave glyph; eyes get the CCTV
+        getIcon: (d) => (d.kind === 'audio' ? 'hydrophone' : 'cctv'),
         getPosition: (d) => [d.lng, d.lat],
         getColor: (d) => (d.kind === 'audio' ? AUDIO_VIOLET : CAM_GREY),
         getSize: 15,

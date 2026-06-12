@@ -1,15 +1,15 @@
-import { ScatterplotLayer } from '@deck.gl/layers';
+import { IconLayer } from '@deck.gl/layers';
 import type { Layer } from '@deck.gl/core';
 import type { LayerDef, LayerCtx } from '../types';
-import { type SnapshotMover } from './aircraft';
+import { type SnapshotMover, MOVER_ATLAS, MOVER_MAPPING } from './aircraft';
 import { useAnimatedSnapshot } from '@/map/useAnimatedSnapshot';
 import { buildMoverLabels, tagColor } from '../moverText';
 
 // BC Transit buses (Victoria Regional) from the positions:bus snapshot —
-// never raw entity scans (ARCHITECTURE §10). Marker identity contract:
-// each bus is color-keyed by its route and shows the route code ("22A",
-// "6") once zoomed in enough for tags to breathe. Dense fleet (~200+ at
-// peak), so defaultOn false.
+// never raw entity scans (ARCHITECTURE §10). Marker identity contract: a bus
+// icon color-keyed per route, with the route code ("22A", "6") under it once
+// zoomed in. Bus glyph stays upright (a level bus reads better than a rotated
+// one); heading lives in the trail, not the marker. Dense fleet → defaultOn false.
 const LABEL_MIN_ZOOM = 10.2;
 
 export const transitLayer: LayerDef<SnapshotMover> = {
@@ -23,18 +23,17 @@ export const transitLayer: LayerDef<SnapshotMover> = {
   },
   toLayers(data, ctx?: LayerCtx) {
     const layers: Layer[] = [
-      new ScatterplotLayer<SnapshotMover>({
+      new IconLayer<SnapshotMover>({
         id: 'transit',
         data,
+        iconAtlas: MOVER_ATLAS,
+        iconMapping: MOVER_MAPPING,
+        getIcon: () => 'bus',
         getPosition: (d) => [d.lng, d.lat],
-        getRadius: 60,
-        radiusUnits: 'meters',
-        radiusMinPixels: 3.5,
-        radiusMaxPixels: 8,
-        getFillColor: (d) => tagColor(d.t),
-        stroked: true,
-        getLineColor: [10, 12, 16, 220],
-        lineWidthMinPixels: 1,
+        getColor: (d) => tagColor(d.t),
+        getSize: 15,
+        sizeUnits: 'pixels',
+        sizeMinPixels: 9,
         pickable: true,
       }),
     ];
@@ -44,7 +43,7 @@ export const transitLayer: LayerDef<SnapshotMover> = {
           getText: (d) => d.t,
           getColor: (d) => tagColor(d.t),
           size: 10,
-          offsetY: 10,
+          offsetY: 11,
         }),
       );
     }
