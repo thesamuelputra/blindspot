@@ -137,6 +137,9 @@ export default defineSchema({
     sourceSlug: v.string(),
     attribution: v.string(),
     active: v.boolean(),
+    // when exact coords are unknown, the cam is placed at an estimate and
+    // approxKm is the uncertainty radius (km) — the map draws a range circle
+    approxKm: v.optional(v.number()),
   })
     .index('by_slug', ['slug'])
     .index('by_kind', ['kind']),

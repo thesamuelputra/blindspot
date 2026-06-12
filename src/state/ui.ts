@@ -16,6 +16,7 @@ export interface CameraDoc {
   mediaUrl: string;
   refreshSec?: number;
   attribution: string;
+  approxKm?: number;
 }
 
 interface UiState {

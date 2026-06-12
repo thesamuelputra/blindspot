@@ -1,5 +1,6 @@
 import { useQuery } from 'convex/react';
-import { IconLayer } from '@deck.gl/layers';
+import { IconLayer, ScatterplotLayer } from '@deck.gl/layers';
+import type { Layer } from '@deck.gl/core';
 import { api } from '../../../convex/_generated/api';
 import type { Doc } from '../../../convex/_generated/dataModel';
 import type { LayerDef } from '../types';
@@ -23,7 +24,27 @@ export const camsLayer: LayerDef<Camera> = {
     return { data: data ?? [] };
   },
   toLayers(data) {
-    return [
+    const approx = data.filter((d) => d.approxKm && d.approxKm > 0);
+    const layers: Layer[] = [];
+    // uncertainty range circle for cams placed at an estimated location
+    if (approx.length > 0) {
+      layers.push(
+        new ScatterplotLayer<Camera>({
+          id: 'cams-approx',
+          data: approx,
+          getPosition: (d) => [d.lng, d.lat],
+          getRadius: (d) => (d.approxKm ?? 0) * 1000,
+          radiusUnits: 'meters',
+          stroked: true,
+          filled: true,
+          getFillColor: [170, 180, 196, 14],
+          getLineColor: [170, 180, 196, 70],
+          lineWidthMinPixels: 1,
+          pickable: false,
+        }),
+      );
+    }
+    layers.push(
       new IconLayer<Camera>({
         id: 'cams',
         data,
@@ -41,6 +62,7 @@ export const camsLayer: LayerDef<Camera> = {
         sizeMinPixels: 11,
         pickable: true,
       }),
-    ];
+    );
+    return layers;
   },
 };

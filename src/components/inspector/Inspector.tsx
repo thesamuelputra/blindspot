@@ -182,7 +182,14 @@ function CameraPanel({ target }: { target: Extract<InspectTarget, { type: 'camer
       <LiveMedia camera={cam} />
       <div style={{ marginTop: 8 }}>
         <Row k="KIND" v={cam.kind.toUpperCase()} />
-        <Row k="POSITION" v={`${cam.lat.toFixed(4)}, ${cam.lng.toFixed(4)}`} />
+        <Row
+          k="POSITION"
+          v={
+            cam.approxKm
+              ? `~${cam.lat.toFixed(3)}, ${cam.lng.toFixed(3)} (est. ±${cam.approxKm} km)`
+              : `${cam.lat.toFixed(4)}, ${cam.lng.toFixed(4)}`
+          }
+        />
         <Row k="CREDIT" v={cam.attribution} />
       </div>
     </div>
