@@ -81,6 +81,10 @@ crons.interval('extra-cams', { seconds: 86477 }, internal.feeds.extraCams.sync, 
 crons.interval('cams-agency', { seconds: 86479 }, internal.feeds.camsAgency.sync, {});
 crons.interval('cams-institutional', { seconds: 86491 }, internal.feeds.camsInstitutional.sync, {});
 crons.interval('cams-marine-harbour', { seconds: 86501 }, internal.feeds.camsMarineHarbour.sync, {});
+crons.interval('cams-aggregators', { seconds: 86503 }, internal.feeds.camsAggregators.sync, {});
+crons.interval('cams-tourism', { seconds: 86513 }, internal.feeds.camsTourism.sync, {});
+crons.interval('cams-wildlife', { seconds: 86519 }, internal.feeds.camsWildlife.sync, {});
+crons.interval('cams-transport', { seconds: 86527 }, internal.feeds.camsTransport.sync, {});
 crons.interval('pattern-of-life', { seconds: 86497 }, internal.brain.patternOfLife.computeAll, {});
 
 export default crons;
